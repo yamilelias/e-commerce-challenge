@@ -11,6 +11,18 @@ import styles from "./sections.module.css";
 
 type LoadState<T> = { data: T; loading: boolean; error: boolean };
 
+function selectFeaturedProducts(products: Product[]): Product[] {
+  const seenNames = new Set<string>();
+
+  return products.filter((product) => {
+    const name = product.name.trim();
+    const key = name.toLocaleLowerCase();
+    if (!name || /[<>]/.test(name) || seenNames.has(key)) return false;
+    seenNames.add(key);
+    return true;
+  }).slice(0, 8);
+}
+
 export function HomeSections() {
   const [categories, setCategories] = useState<LoadState<Category[]>>({ data: [], loading: true, error: false });
   const [products, setProducts] = useState<LoadState<Product[]>>({ data: [], loading: true, error: false });
@@ -22,8 +34,8 @@ export function HomeSections() {
       .then((response) => setCategories({ data: response.data, loading: false, error: false }))
       .catch(() => { if (!controller.signal.aborted) setCategories({ data: [], loading: false, error: true }); });
 
-    getProducts({ page: 1, per_page: 8 }, controller.signal)
-      .then((response) => setProducts({ data: response.data, loading: false, error: false }))
+    getProducts({ page: 1, per_page: 16 }, controller.signal)
+      .then((response) => setProducts({ data: selectFeaturedProducts(response.data), loading: false, error: false }))
       .catch(() => { if (!controller.signal.aborted) setProducts({ data: [], loading: false, error: true }); });
 
     return () => controller.abort();
