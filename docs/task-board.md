@@ -11,8 +11,8 @@ Updated 2026-10-15. Statuses: BACKLOG, READY, IN_PROGRESS, REVIEW, DONE, BLOCKED
 | QA-01 | 1–2 | QA/Docs | P0 | ARCH-01 | A, B | REVIEW | `940c5df` |
 | BE-02a | 3 | Backend | P0 | BE-01 | C | REVIEW | `60db5f4` |
 | BE-02b | 3 | Backend | P0 | BE-02a | C | REVIEW | `f58e45c` |
-| BE-02c | 3 | Backend | P0 | BE-02b | C | IN_PROGRESS | — |
-| BE-02d | 3 | Backend | P0 | BE-02c | C | BACKLOG | — |
+| BE-02c | 3 | Backend | P0 | BE-02b | C | REVIEW | `0a0729d` |
+| BE-02d | 3 | Backend | P0 | BE-02c | C | IN_PROGRESS | — |
 | FE-02a | 3–4 | Frontend | P0 | FE-01, BE-02d contract | D | REVIEW | `2cfc2d4` |
 | FE-02b | 4 | Frontend | P0 | FE-01, BE-02a–c contract | D | REVIEW | `f73ade2` |
 | INF-02 | 3–5 | DevOps | P0 | INF-01, BE-02a–d, FE-02a–b | B, E | IN_PROGRESS | — |
@@ -89,3 +89,4 @@ Updated 2026-10-15. Statuses: BACKLOG, READY, IN_PROGRESS, REVIEW, DONE, BLOCKED
 - FE-02a: typecheck/lint/build and targeted cart/retry/proxy assertions passed. Product detail, cart, checkout and receipt are committed; live seeded purchase remains **NOT VERIFIED**. The proxy `Location` forwarding fix awaits QA retest.
 - BE-02b: Composer lockfile, admin session/CSRF and product write endpoints committed. Docker PHPUnit passed 9 tests/33 assertions; `docker compose --env-file .env.example build api` exited 0. API startup still waits on BE-02c seed command.
 - FE-02b: admin login, CRUD and CSV import UI committed; typecheck/lint/build and targeted auth/multipart/proxy checks passed. Live admin journeys remain **NOT VERIFIED** pending BE-02c and Compose boot.
+- BE-02c: shared importer, protected upload and seed command committed. Disposable SQLite migration + seed accepted 85, skipped 5 and rejected 7 rows; repeat inserted 0. PHP lint and PHPUnit 12 tests/46 assertions passed. Isolated Compose boot is in progress.
