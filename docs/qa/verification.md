@@ -112,3 +112,54 @@ Browser verification on the fresh-clone app: admin sign-in reached the real prod
 Additional disposable API probes: an inactive product checkout returned `PRODUCT_UNAVAILABLE` 409; an order item with a client-supplied price returned `VALIDATION_ERROR` 422; after a purchased product was soft-deleted, public detail returned 404 while its paid receipt kept the original name and 1234-cent total. In the browser, a two-unit cart stayed intact when a competing fake purchase reduced current stock to one. Checkout displayed the unavailable-stock warning and disabled the order button; the cart was then cleared, and the test product was deactivated. One initial probe exited 1 because the probe expected the internal database field `name_snapshot` in the public response; the contract field is `name`. The corrected probe exited 0; this was a test assertion error, not an application defect.
 
 **Release gate assessment:** Gates A–F pass on the checks above. The remaining documented limitation is SQLite's built-in Unicode case folding for accented search terms (QA-004). Production npm audit reports zero vulnerabilities; five high advisories remain in development-only ESLint dependencies.
+
+## QA-04 remote product images, 2026-10-16
+
+Catalog commit: `3933a53`. The local `python3` catalog inspection exited 0: the supplied CSV has 97 data rows; the curated catalog has 85 SKU keys and 85 distinct URLs. Every key occurs in the CSV after SKU normalization, every value has exactly the five contracted nonempty fields, thumbnail URLs use HTTPS on `upload.wikimedia.org`, source pages use `commons.wikimedia.org`, and license links use HTTPS. Licenses represented are CC0, CC BY 1.0/2.0/3.0/4.0, and CC BY-SA 2.0/3.0/4.0. This structural check does not prove that every image renders or depicts its product.
+
+The following post-start HTTP check exited 0 against `ecommerce-inf02` at `http://localhost:3300`: all 85 active list products match the checked-in catalog on all five image fields, and five representative detail responses match. It also asserts the list count and exact SKU set.
+
+```sh
+python3 - <<'PY'
+import json, urllib.request
+from pathlib import Path
+catalog = json.loads(Path('data/product-images.json').read_text())
+base = 'http://localhost:3300/api/v1/products'
+def get(url):
+    with urllib.request.urlopen(url, timeout=15) as response:
+        assert response.status == 200
+        return json.load(response)
+page = get(base + '?per_page=100')
+rows = page['data']
+fields = ('image_url', 'image_source_url', 'image_attribution', 'image_license', 'image_license_url')
+assert page['pagination']['total'] == 85 and len(rows) == 85
+assert set(catalog) == {row['sku'] for row in rows}
+assert all(all(row[field] == catalog[row['sku']][field] for field in fields) for row in rows)
+for sku in ('RS-001', 'CB-010', 'AP-002', 'TB-028', 'PRJ-001'):
+    product = next(row for row in rows if row['sku'] == sku)
+    detail = get(base + '/' + str(product['id']))['data']
+    assert all(detail[field] == catalog[sku][field] for field in fields)
+print('PASS: 85/85 list products and 5/5 detail products match catalog')
+PY
+```
+
+DevOps ran the startup checks below; each command exited 0. The existing `ecommerce-inf02` SQLite volume was retained. Before the image update it had the original migration; startup applied the image migration, CSV seed reported inserted 0/skipped 90/rejected 7, and enrichment reported total 85/updated 85/skipped 0/missing 0. A later startup reported updated 0/skipped 85. The fresh `ecommerce-imgfresh` volume applied two migrations, seeded 85 valid products from 97 rows (5 skipped, 7 rejected), enriched 85/85, and a restart reported updated 0/skipped 85. The fresh volume was removed after verification.
+
+The BE-03 agent reported `vendor/bin/phpunit` in the PHP 8.3 Docker test image exiting 0 with 18 tests and 108 assertions. `apps/api/tests/Integration/ProductImageImporterTest.php` includes a null DTO check for an unenriched product, invalid-catalog rollback, and repeat import preservation. This result is agent-observed; QA did not independently rerun PHPUnit for QA-04.
+
+| Command | Exit | Observed result |
+|---|---:|---|
+| `docker compose config --quiet` | 0 | Compose configuration parsed. |
+| `WEB_PORT=3300 PUBLIC_ORIGIN=http://localhost:3300 docker compose -p ecommerce-inf02 up --build -d api` | 0 | Existing-volume migration and enrichment succeeded; API healthy. |
+| `WEB_PORT=3301 PUBLIC_ORIGIN=http://localhost:3301 docker compose -p ecommerce-imgfresh up -d --no-deps api` | 0 | New volume created; two migrations, CSV seed and image enrichment succeeded. |
+| `WEB_PORT=3301 PUBLIC_ORIGIN=http://localhost:3301 docker compose -p ecommerce-imgfresh exec -T api php -r '$db=new PDO("sqlite:/data/ecommerce.sqlite"); echo json_encode($db->query("SELECT COUNT(*) AS products, SUM(image_url IS NOT NULL) AS imaged FROM products")->fetch(PDO::FETCH_ASSOC)), PHP_EOL;'` | 0 | `{"products":85,"imaged":85}`. |
+| `WEB_PORT=3301 PUBLIC_ORIGIN=http://localhost:3301 docker compose -p ecommerce-imgfresh restart api` | 0 | Repeat enrichment: total 85, updated 0, skipped 85, missing 0. |
+| `WEB_PORT=3300 PUBLIC_ORIGIN=http://localhost:3300 docker compose -p ecommerce-inf02 up --build -d` | 0 | Both updated images built; API and web healthy. |
+| `curl -sS -o /dev/null -w 'root=%{http_code}\n' http://127.0.0.1:3300/ && curl -sS -o /dev/null -w 'health=%{http_code}\n' http://127.0.0.1:3300/api/v1/health` | 0 | Root and proxied health both HTTP 200. |
+| `WEB_PORT=3301 PUBLIC_ORIGIN=http://localhost:3301 docker compose -p ecommerce-imgfresh down -v` | 0 | Disposable fresh volume removed; existing volume untouched. |
+
+The image researcher reported that bulk HEAD requests to Wikimedia Commons returned three successes, then HTTP 429 rate limiting. QA did not repeat bulk URL probes. Browser sample loading and visible attribution follow.
+
+Orchestrator's Chrome browser check on the rebuilt stack at `http://localhost:3300`: at 1740px desktop width, home cards for XS-001, AP-002, BM-006 and BP-008 loaded Commons images (`naturalWidth=960` for each), with visual relevance inspected. AP-002 detail loaded its 960px photo and displayed creator “Home Air Quality Guides,” a Commons Source link, and a CC BY-SA 2.0 license link. At 390×844 mobile, AP-002 detail loaded the image, displayed the credit and links, and had `document.documentElement.scrollWidth=390` (no horizontal overflow). This is a four-image rendering sample, not a full 85-image uptime guarantee.
+
+For the broken-image fallback, the orchestrator temporarily changed AP-002's stored image URL to an invalid HTTPS path in the isolated existing-volume database (one row), reloaded its Chrome detail page at 390px width, and observed zero image elements plus the category-letter `H` placeholder without horizontal overflow. The original catalog URL was restored (one row), the page reloaded, and one image element returned with `naturalWidth > 0`. The restored product is again covered by the checked-in catalog.

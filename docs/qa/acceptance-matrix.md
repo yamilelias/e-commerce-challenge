@@ -52,3 +52,12 @@ Contract baseline: `docs/04-API.md` frozen at `3532803` on 2026-10-15. PASS rows
 ## Recording rule
 
 For each run, add exact command/steps, exit/status, expected and observed result, timestamp/timezone, environment, and a redacted evidence reference to `verification.md`. Manual checks also name browser and viewport. Do not promote a row to PASS based on source inspection alone. Any failed P0 check gets a defect entry and owner handoff.
+
+## Remote image extension (IMG-01, BE-03, FE-04, INF-03, QA-04)
+
+| ID | Evidence to obtain | Status |
+|---|---|---|
+| IMG-A | Every valid seeded SKU has a catalog entry with a direct HTTPS thumbnail, Commons source, creator credit, license, and license link; spot-check relevance and URL responses | PASS — 85 local entries; 4 Chrome image loads/relevance samples |
+| IMG-B | Existing-volume migration and fresh-volume startup enrich 85 seeded products; API list/detail return matching non-null metadata | PASS — DevOps startup/DB and QA HTTP checks |
+| IMG-C | Repeated enrichment leaves existing image URLs unchanged; products without entries retain null fields and display a fallback | PASS — repeat command, backend null-path test, Chrome broken-image fallback |
+| IMG-D | Desktop/mobile storefront displays remote photos, source/creator/license on detail, and a fallback for broken URLs | PASS — Chrome desktop/mobile samples |

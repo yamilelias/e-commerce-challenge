@@ -1,6 +1,6 @@
 # E-Commerce MVP task board
 
-Updated 2026-10-16. Statuses: BACKLOG, READY, IN_PROGRESS, REVIEW, DONE, BLOCKED. The shared contracts are `02-ARCHITECTURE.md` and `04-API.md`; see `decisions.md`. Source assets: `data/products.csv` (97 data records) and `docs/reference/landing-page.png`. The original MVP passed Gates A–F; remote product images are an approved extension in progress.
+Updated 2026-10-16. Statuses: BACKLOG, READY, IN_PROGRESS, REVIEW, DONE, BLOCKED. The shared contracts are `02-ARCHITECTURE.md` and `04-API.md`; see `decisions.md`. Source assets: `data/products.csv` (97 data records) and `docs/reference/landing-page.png`. The original MVP passed Gates A–F; the approved remote product image extension passed QA-04 checks.
 
 | ID | Phase | Owner | Priority | Depends on | Gate | Status | Commit |
 |---|---:|---|---|---|---|---|---|
@@ -20,11 +20,11 @@ Updated 2026-10-16. Statuses: BACKLOG, READY, IN_PROGRESS, REVIEW, DONE, BLOCKED
 | QA-02a | 3 | QA/Docs | P0 | BE-01, FE-01, INF-01 | C, D | DONE | `448795f` |
 | QA-02b | 4–5 | QA/Docs | P0 | BE-02a–d, FE-02a–b, INF-01 | C–E | DONE | `9c7ca76` |
 | QA-03 | 6 | QA/Docs | P0 | QA-02, INF-02 | F | DONE | `87c4b54` |
-| IMG-01 | Extension | Image research | P0 | Image contract | Image coverage | READY | — |
-| BE-03 | Extension | Backend | P0 | Image contract | API/database | READY | — |
-| FE-04 | Extension | Frontend | P0 | Image contract | Browser | READY | — |
-| INF-03 | Extension | DevOps | P0 | IMG-01, BE-03 | Runtime | BACKLOG | — |
-| QA-04 | Extension | QA/Docs | P0 | IMG-01, BE-03, FE-04, INF-03 | Delivery | BACKLOG | — |
+| IMG-01 | Extension | Image research | P0 | Image contract | Image coverage | DONE | `3933a53` |
+| BE-03 | Extension | Backend | P0 | Image contract | API/database | DONE | `0dff0f5` |
+| FE-04 | Extension | Frontend | P0 | Image contract | Browser | DONE | `28e36a9` |
+| INF-03 | Extension | DevOps | P0 | IMG-01, BE-03 | Runtime | DONE | `7a944ce` |
+| QA-04 | Extension | QA/Docs | P0 | IMG-01, BE-03, FE-04, INF-03 | Delivery | DONE | QA-04 verification commit |
 
 ## Remote image extension assignments
 

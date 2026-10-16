@@ -23,14 +23,21 @@ Install Docker Desktop (or Docker Engine with Compose v2) and Python 3. No host 
    python3 scripts/smoke/public_api.py
    ```
 
-Open <http://localhost:3000>. The `api` container runs the migration and create-only CSV seed before it becomes healthy; the `web` container starts afterward. Only the web port is published, on loopback. Browser API calls go through the same-origin `/api/v1` proxy.
+Open <http://localhost:3000>. The `api` container runs migrations, the create-only CSV seed, and product image enrichment before it becomes healthy; the `web` container starts afterward. Only the web port is published, on loopback. Browser API calls go through the same-origin `/api/v1` proxy.
 
 The original CSV has 97 data rows. A fresh seed inserts 85 products, skips 5 duplicate or blank rows, and rejects 7 invalid rows with reasons. A restart or repeat seed inserts none and preserves edits and purchased stock. Review the actual report with:
 
 ```sh
 docker compose logs api
 docker compose exec api php bin/console app:products:seed --file=/app/data/products.csv
+docker compose exec api php bin/console app:products:images --file=/app/data/product-images.json
 ```
+
+## Product photos
+
+`data/product-images.json` maps seeded SKUs to Wikimedia Commons image URLs, source pages, creator credits, and license links. The API stores these **URLs and attribution fields**, not image bytes. Startup enriches matching products after the CSV seed. Repeating the command above leaves products with an existing image URL unchanged; new admin products without a catalog entry use the visual fallback. The original CSV and admin product form do not accept image fields.
+
+The storefront requests thumbnails directly from Wikimedia Commons. Product detail links to the source and license and shows the creator credit. A browser needs network access to Commons to show the photos; missing or unreachable images display a fallback. Commons can remove or change an image, so review its source and license when updating the catalog. Remote requests also expose the visitor's IP address to Wikimedia Commons.
 
 ## Use the application
 
@@ -80,7 +87,8 @@ SQLite and synchronous import keep setup small but limit write concurrency and l
 
 ## Project map and verification
 
-- `apps/api/`: Symfony controllers, services, entities, migration, tests, and seed command.
+- `apps/api/`: Symfony controllers, services, entities, migrations, tests, seed and image enrichment commands.
+- `data/product-images.json`: curated image URLs and attribution metadata; no image files are stored.
 - `apps/web/`: Next.js storefront, admin UI, cart, checkout, and API proxy.
 - `compose.yaml` and `infra/`: the two-container runtime and persistent database volume.
 - `docs/qa/`: [acceptance matrix](docs/qa/acceptance-matrix.md), [execution evidence](docs/qa/verification.md), and [defect log](docs/qa/defects.md).

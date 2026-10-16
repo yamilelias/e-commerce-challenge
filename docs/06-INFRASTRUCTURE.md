@@ -59,7 +59,7 @@ Use a PHP version supported by the selected Symfony release (PHP 8.3+ per archit
 
 - Build dependency stage runs Composer with locked dependencies, `--no-dev --prefer-dist --no-interaction --optimize-autoloader`; ensure Symfony cache warmup is compatible with runtime env and no dependency on an unavailable build-time database.
 - Required PHP extensions: `pdo_sqlite`, `sqlite3`, `mbstring`, `intl` (and whichever the installed Symfony/CSV stack actually requires); Composer itself need not be present in final runtime if all operations use `vendor` and `bin/console`.
-- Copy `apps/api` source, migrations and bundled `data/products.csv` to **`/app/data/products.csv`**; original fixture bytes stay unmodified. Coordinate build context (`context: .`, `dockerfile: apps/api/Dockerfile`) and `.dockerignore` so it is included, and never copy `.env.local`/`.env` secrets.
+- Copy `apps/api` source, migrations and bundled `data/products.csv` to **`/app/data/products.csv`**; original fixture bytes stay unmodified. Copy `data/product-images.json` to **`/app/data/product-images.json`** for URL enrichment after seed. The catalog contains URLs and attribution metadata only, never image bytes. Coordinate build context (`context: .`, `dockerfile: apps/api/Dockerfile`) and `.dockerignore` so both fixtures are included, and never copy `.env.local`/`.env` secrets.
 - Run as a non-root user after binding the unprivileged port, ensuring `/data` and Symfony writable cache/log/session directories are writable. Root may be used only in a short entrypoint initialization if volume ownership requires it; drop privileges before serving HTTP.
 - Respect `APP_ENV=prod`, `APP_DEBUG=0`, stable `APP_SECRET`, stable `RECEIPT_SECRET`, and `PUBLIC_ORIGIN`. Do not set demo admin password/hash in image layers.
 - API health command uses `GET http://127.0.0.1:8000/api/v1/health` and checks the **HTTP 200** status. `/health` must verify SQLite access per `04-API.md`; fail health on missing/locked-unavailable DB. Avoid tools (`curl` or `wget`) that are absent from chosen runtime; embed a small PHP-based check if necessary.
@@ -118,6 +118,8 @@ docker compose logs --tail=100 web
 docker compose exec api php bin/console doctrine:migrations:status
 docker compose exec api php bin/console app:products:seed --file=/app/data/products.csv
 # Verify second seed has inserted = 0; no inventory resets.
+docker compose exec api php bin/console app:products:images --file=/app/data/product-images.json
+# Verify repeat enrichment updates zero rows and preserves existing image URLs.
 
 # Safe restart, keeps data
 docker compose down
@@ -127,7 +129,7 @@ docker compose up -d
 # docker compose down -v
 ```
 
-**Do not run migrations/seed at Docker image build time**: SQLite database belongs to runtime volume and must persist independently of image rebuilds. Avoid a `docker compose run` recipe that silently creates a separate database or changes ownership.
+**Do not run migrations, seed, or image enrichment at Docker image build time**: SQLite database belongs to runtime volume and must persist independently of image rebuilds. Avoid a `docker compose run` recipe that silently creates a separate database or changes ownership. The browser fetches thumbnails from Wikimedia Commons; lack of external network access must leave a usable product fallback.
 
 ## 7. Build optimization and reliability constraints
 
