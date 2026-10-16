@@ -1,4 +1,4 @@
-import type { ApiErrorResponse, DataResponse, ListResponse, Product, Category, ProductSort, OrderRequest, OrderConfirmation, OrderReceipt } from "./types";
+import type { ApiErrorResponse, DataResponse, ListResponse, Product, Category, ProductSort, OrderRequest, OrderConfirmation, OrderReceipt, AdminSession, ProductWrite, ImportResult } from "./types";
 
 export class ApiRequestError extends Error {
   constructor(
@@ -77,4 +77,46 @@ export function createOrder(body: OrderRequest, key: string): Promise<DataRespon
 
 export function getOrder(reference: string, token: string, signal?: AbortSignal): Promise<DataResponse<OrderReceipt>> {
   return getJson<DataResponse<OrderReceipt>>(`/orders/${encodeURIComponent(reference)}?token=${encodeURIComponent(token)}`, signal);
+}
+
+export function getAdminSession(): Promise<DataResponse<AdminSession>> {
+  return getJson<DataResponse<AdminSession>>("/admin/session");
+}
+
+export function loginAdmin(username: string, password: string, csrf: string): Promise<DataResponse<AdminSession>> {
+  return requestJson<DataResponse<AdminSession>>("/admin/login", { method: "POST", headers: { "Content-Type": "application/json", "X-CSRF-Token": csrf }, body: JSON.stringify({ username, password }) });
+}
+
+export function logoutAdmin(csrf: string): Promise<void> {
+  return requestJson<void>("/admin/logout", { method: "POST", headers: { "X-CSRF-Token": csrf } });
+}
+
+export type AdminProductQuery = ProductQuery & { status?: "all" | "active" | "inactive" };
+
+export function getAdminProducts(query: AdminProductQuery, signal?: AbortSignal): Promise<ListResponse<Product>> {
+  const params = new URLSearchParams(productQueryString(query));
+  if (query.status) params.set("status", query.status);
+  return getJson<ListResponse<Product>>(`/admin/products?${params}`, signal);
+}
+
+export function getAdminProduct(id: number, signal?: AbortSignal): Promise<DataResponse<Product>> {
+  return getJson<DataResponse<Product>>(`/admin/products/${id}`, signal);
+}
+
+export function createProduct(body: ProductWrite, csrf: string): Promise<DataResponse<Product>> {
+  return requestJson<DataResponse<Product>>("/products", { method: "POST", headers: { "Content-Type": "application/json", "X-CSRF-Token": csrf }, body: JSON.stringify(body) });
+}
+
+export function updateProduct(id: number, body: ProductWrite, csrf: string): Promise<DataResponse<Product>> {
+  return requestJson<DataResponse<Product>>(`/products/${id}`, { method: "PATCH", headers: { "Content-Type": "application/json", "X-CSRF-Token": csrf }, body: JSON.stringify(body) });
+}
+
+export function deleteProduct(id: number, csrf: string): Promise<void> {
+  return requestJson<void>(`/products/${id}`, { method: "DELETE", headers: { "X-CSRF-Token": csrf } });
+}
+
+export function importProducts(file: File, csrf: string): Promise<DataResponse<ImportResult>> {
+  const body = new FormData();
+  body.append("file", file);
+  return requestJson<DataResponse<ImportResult>>("/products/import", { method: "POST", headers: { "X-CSRF-Token": csrf }, body });
 }

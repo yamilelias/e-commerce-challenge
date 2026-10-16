@@ -60,3 +60,14 @@ export type OrderReceipt = {
   paid_at: string;
 };
 export type OrderConfirmation = OrderReceipt & { receipt_token: string };
+
+export type AdminSession = { authenticated: boolean; username: string | null; csrf_token: string };
+export type ImportIssue = { row: number; field: string; code: string; message: string };
+export type ImportResult = {
+  total_rows: number;
+  inserted: number;
+  skipped: number;
+  rejected: number;
+  issues: ImportIssue[];
+  truncated: boolean;
+};
