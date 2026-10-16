@@ -1,13 +1,12 @@
 import Link from "next/link";
 import type { Product } from "@/lib/api/types";
 import { formatUsd } from "@/lib/money";
+import { ProductImage } from "./ProductImage";
 
 export function ProductCard({ product }: { product: Product }) {
   return (
     <article className="card overflow-hidden border border-base-300 bg-base-100 shadow-sm">
-      <div className="product-placeholder flex aspect-[4/3] items-center justify-center text-center" aria-hidden="true">
-        <span className="editorial text-6xl font-semibold text-primary/70">{product.category.name.slice(0, 1).toUpperCase()}</span>
-      </div>
+      <Link href={`/products/${product.id}`} aria-label={`View ${product.name}`}><ProductImage product={product} className="aspect-[4/3] text-6xl" /></Link>
       <div className="card-body gap-2 p-5">
         <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">{product.category.name}</p>
         <h3 className="card-title text-lg leading-snug"><Link className="hover:underline" href={`/products/${product.id}`}>{product.name}</Link></h3>

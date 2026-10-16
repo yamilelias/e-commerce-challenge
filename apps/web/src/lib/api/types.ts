@@ -10,6 +10,11 @@ export type Product = {
   currency: "USD";
   stock: number;
   weight_kg: string;
+  image_url: string | null;
+  image_source_url: string | null;
+  image_attribution: string | null;
+  image_license: string | null;
+  image_license_url: string | null;
   is_active: boolean;
   created_at: string;
   updated_at: string;

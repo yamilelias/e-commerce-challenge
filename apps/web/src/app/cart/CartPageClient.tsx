@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useCart } from "@/features/cart/CartProvider";
 import { useCartProducts } from "@/features/cart/useCartProducts";
 import { formatUsd } from "@/lib/money";
+import { ProductImage } from "@/components/products/ProductImage";
 
 export function CartPageClient() {
   const { lines, ready, setQuantity, remove, clear } = useCart();
@@ -18,7 +19,7 @@ export function CartPageClient() {
         const item = items[line.product_id];
         const product = item?.product;
         return <li className="rounded-box border border-base-300 bg-base-100 p-5" key={line.product_id}>
-          <div className="flex flex-wrap items-start justify-between gap-4"><div><h2 className="font-semibold">{product ? <Link className="link link-hover" href={`/products/${product.id}`}>{product.name}</Link> : `Product #${line.product_id}`}</h2><p className="text-sm text-base-content/70">{product ? formatUsd(product.price_cents) : "Price unavailable"}</p></div><button className="btn btn-ghost btn-sm text-error" onClick={() => remove(line.product_id)} aria-label={`Remove product ${product?.name ?? line.product_id}`}>Remove</button></div>
+          <div className="flex flex-wrap items-start justify-between gap-4"><div className="flex items-start gap-4">{product && <Link href={`/products/${product.id}`} aria-label={`View ${product.name}`}><ProductImage product={product} className="h-20 w-20 shrink-0 rounded-lg text-3xl" /></Link>}<div><h2 className="font-semibold">{product ? <Link className="link link-hover" href={`/products/${product.id}`}>{product.name}</Link> : `Product #${line.product_id}`}</h2><p className="text-sm text-base-content/70">{product ? formatUsd(product.price_cents) : "Price unavailable"}</p></div></div><button className="btn btn-ghost btn-sm text-error" onClick={() => remove(line.product_id)} aria-label={`Remove product ${product?.name ?? line.product_id}`}>Remove</button></div>
           <div className="mt-4 flex flex-wrap items-center gap-4"><label className="flex items-center gap-2 text-sm">Quantity<input className="input input-bordered w-24" type="number" min={1} max={999} value={line.quantity} onChange={(event) => { const value = Number(event.target.value); if (Number.isInteger(value) && value >= 1 && value <= 999) setQuantity(line.product_id, value); }} /></label>{product && <span className="font-semibold">{formatUsd(product.price_cents * line.quantity)}</span>}</div>
           {item?.error === "unavailable" && <p className="mt-3 text-sm text-error" role="alert">This product is no longer available. Remove it to continue.</p>}
           {item?.error === "network" && <p className="mt-3 text-sm text-error" role="alert">Could not check this product. Refresh and try again.</p>}

@@ -6,6 +6,7 @@ import { ApiRequestError, getProduct } from "@/lib/api/client";
 import type { Product } from "@/lib/api/types";
 import { useCart } from "@/features/cart/CartProvider";
 import { formatUsd } from "@/lib/money";
+import { ProductImage } from "@/components/products/ProductImage";
 
 export function ProductDetail({ id }: { id: string }) {
   const numericId = Number(id);
@@ -30,7 +31,14 @@ export function ProductDetail({ id }: { id: string }) {
   return <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-16">
     <Link className="link link-primary text-sm" href="/products">← All products</Link>
     <div className="mt-8 grid gap-8 lg:grid-cols-2 lg:gap-14">
-      <div className="product-placeholder flex aspect-square items-center justify-center rounded-box" aria-hidden="true"><span className="editorial text-[10rem] text-primary/60">{product.category.name.slice(0, 1).toUpperCase()}</span></div>
+      <figure>
+        <ProductImage product={product} className="aspect-square rounded-box text-[10rem]" />
+        {product.image_url && (product.image_source_url || product.image_attribution || product.image_license) && <figcaption className="mt-2 text-xs text-base-content/70">
+          Photo{product.image_attribution ? ` by ${product.image_attribution}` : ""}
+          {product.image_source_url && <> · <a className="link" href={product.image_source_url} target="_blank" rel="noopener noreferrer">Source</a></>}
+          {product.image_license && <> · {product.image_license_url ? <a className="link" href={product.image_license_url} target="_blank" rel="noopener noreferrer">{product.image_license}</a> : product.image_license}</>}
+        </figcaption>}
+      </figure>
       <div>
         <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">{product.category.name}</p>
         <h1 className="editorial mt-3 text-4xl font-semibold sm:text-5xl">{product.name}</h1>
