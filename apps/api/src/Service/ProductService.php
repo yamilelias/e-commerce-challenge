@@ -220,6 +220,9 @@ final class ProductService
             'category' => ['id' => (int) $row['category_id'], 'name' => $row['category_name'], 'slug' => $row['category_slug']],
             'price_cents' => (int) $row['price_cents'], 'currency' => 'USD', 'stock' => (int) $row['stock'],
             'weight_kg' => $whole.'.'.str_pad($fraction, 3, '0'), 'is_active' => (bool) $row['is_active'],
+            'image_url' => $row['image_url'], 'image_source_url' => $row['image_source_url'],
+            'image_attribution' => $row['image_attribution'], 'image_license' => $row['image_license'],
+            'image_license_url' => $row['image_license_url'],
             'created_at' => (new \DateTimeImmutable($row['created_at'], $utc))->format('Y-m-d\TH:i:s\Z'),
             'updated_at' => (new \DateTimeImmutable($row['updated_at'], $utc))->format('Y-m-d\TH:i:s\Z'),
         ];

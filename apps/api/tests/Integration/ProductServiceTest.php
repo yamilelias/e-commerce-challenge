@@ -22,6 +22,9 @@ final class ProductServiceTest extends TestCase
         self::assertSame('COTTON-1', $cotton['sku']);
         self::assertSame(1250, $cotton['price_cents']);
         self::assertSame('0.250', $cotton['weight_kg']);
+        foreach (['image_url', 'image_source_url', 'image_attribution', 'image_license', 'image_license_url'] as $field) {
+            self::assertNull($cotton[$field]);
+        }
         $found = $service->list(['q' => '%', 'page' => '1', 'per_page' => '1']);
         self::assertSame(1, $found['pagination']['total']);
         self::assertSame($cotton['id'], $found['data'][0]['id']);
@@ -41,7 +44,7 @@ final class ProductServiceTest extends TestCase
     {
         $db = DriverManager::getConnection(['driver' => 'pdo_sqlite', 'memory' => true, 'wrapperClass' => SqliteConnection::class]);
         $db->executeStatement('CREATE TABLE categories (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(100) NOT NULL, slug VARCHAR(120) NOT NULL UNIQUE)');
-        $db->executeStatement("CREATE TABLE products (id INTEGER PRIMARY KEY AUTOINCREMENT, category_id INTEGER NOT NULL, name VARCHAR(200) NOT NULL, sku VARCHAR(100) NOT NULL UNIQUE, description TEXT NOT NULL DEFAULT '', price_cents INTEGER NOT NULL, stock INTEGER NOT NULL, weight_kg NUMERIC(10,3) NOT NULL, is_active BOOLEAN NOT NULL DEFAULT 1, created_at DATETIME NOT NULL, updated_at DATETIME NOT NULL, FOREIGN KEY (category_id) REFERENCES categories(id))");
+        $db->executeStatement("CREATE TABLE products (id INTEGER PRIMARY KEY AUTOINCREMENT, category_id INTEGER NOT NULL, name VARCHAR(200) NOT NULL, sku VARCHAR(100) NOT NULL UNIQUE, description TEXT NOT NULL DEFAULT '', price_cents INTEGER NOT NULL, stock INTEGER NOT NULL, weight_kg NUMERIC(10,3) NOT NULL, image_url TEXT DEFAULT NULL, image_source_url TEXT DEFAULT NULL, image_attribution TEXT DEFAULT NULL, image_license TEXT DEFAULT NULL, image_license_url TEXT DEFAULT NULL, is_active BOOLEAN NOT NULL DEFAULT 1, created_at DATETIME NOT NULL, updated_at DATETIME NOT NULL, FOREIGN KEY (category_id) REFERENCES categories(id))");
 
         return new ProductService($db, new ProductInput());
     }

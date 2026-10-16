@@ -40,6 +40,21 @@ class Product
     #[ORM\Column(name: 'weight_kg', type: Types::DECIMAL, precision: 10, scale: 3)]
     public string $weightKg;
 
+    #[ORM\Column(name: 'image_url', type: Types::TEXT, nullable: true)]
+    public ?string $imageUrl = null;
+
+    #[ORM\Column(name: 'image_source_url', type: Types::TEXT, nullable: true)]
+    public ?string $imageSourceUrl = null;
+
+    #[ORM\Column(name: 'image_attribution', type: Types::TEXT, nullable: true)]
+    public ?string $imageAttribution = null;
+
+    #[ORM\Column(name: 'image_license', type: Types::TEXT, nullable: true)]
+    public ?string $imageLicense = null;
+
+    #[ORM\Column(name: 'image_license_url', type: Types::TEXT, nullable: true)]
+    public ?string $imageLicenseUrl = null;
+
     #[ORM\Column(name: 'is_active', type: 'boolean', options: ['default' => true])]
     public bool $isActive = true;
 
