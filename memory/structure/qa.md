@@ -1,0 +1,3 @@
+# QA evidence structure
+
+As of 2026-10-15, `scripts/smoke/public_api.py` is a read-only Python standard-library HTTP check against the browser-facing `/api/v1` proxy. It checks `/health`, `/products`, `/categories`, an invalid products query, and unauthenticated `/admin/products`; it does not create fixtures or verify checkout. `docs/qa/acceptance-matrix.md` maps AC-01–AC-21 and C-01–C-16 to planned evidence. `docs/qa/verification.md` records actual results and limitations. `README.md` is an explicitly unverified setup draft. Runtime cases remain unfinished; see `docs/07-QUALITY.md` for the full plan.
