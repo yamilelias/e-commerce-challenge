@@ -1,6 +1,6 @@
 # E-Commerce MVP task board
 
-Updated 2026-10-16. Statuses: BACKLOG, READY, IN_PROGRESS, REVIEW, DONE, BLOCKED. The frozen shared contracts are `02-ARCHITECTURE.md` and `04-API.md`; see `decisions.md`. Source assets: `data/products.csv` (97 data records) and `docs/reference/landing-page.png`. The MVP is implemented and Gates A–F have observed evidence in `docs/qa/verification.md`.
+Updated 2026-10-16. Statuses: BACKLOG, READY, IN_PROGRESS, REVIEW, DONE, BLOCKED. The shared contracts are `02-ARCHITECTURE.md` and `04-API.md`; see `decisions.md`. Source assets: `data/products.csv` (97 data records) and `docs/reference/landing-page.png`. The original MVP passed Gates A–F; remote product images are an approved extension in progress.
 
 | ID | Phase | Owner | Priority | Depends on | Gate | Status | Commit |
 |---|---:|---|---|---|---|---|---|
@@ -20,6 +20,19 @@ Updated 2026-10-16. Statuses: BACKLOG, READY, IN_PROGRESS, REVIEW, DONE, BLOCKED
 | QA-02a | 3 | QA/Docs | P0 | BE-01, FE-01, INF-01 | C, D | DONE | `448795f` |
 | QA-02b | 4–5 | QA/Docs | P0 | BE-02a–d, FE-02a–b, INF-01 | C–E | DONE | `9c7ca76` |
 | QA-03 | 6 | QA/Docs | P0 | QA-02, INF-02 | F | DONE | `87c4b54` |
+| IMG-01 | Extension | Image research | P0 | Image contract | Image coverage | READY | — |
+| BE-03 | Extension | Backend | P0 | Image contract | API/database | READY | — |
+| FE-04 | Extension | Frontend | P0 | Image contract | Browser | READY | — |
+| INF-03 | Extension | DevOps | P0 | IMG-01, BE-03 | Runtime | BACKLOG | — |
+| QA-04 | Extension | QA/Docs | P0 | IMG-01, BE-03, FE-04, INF-03 | Delivery | BACKLOG | — |
+
+## Remote image extension assignments
+
+- **IMG-01:** Search Wikimedia Commons for a representative free-license photo for each of the 85 valid seeded SKUs. Commit `data/product-images.json` with direct HTTPS thumbnail URL, source page, creator credit, license name and license URL. Reject unusable or misleading matches. No image bytes. Validate coverage, URLs, and licenses.
+- **BE-03:** Add nullable image columns in a forward migration, read fields in Product DTOs, and implement an idempotent SKU catalog enrichment command. Leave existing CSV schema and admin writes unchanged. Test old-volume migration, new-volume seed, repeat enrichment, and null fallback.
+- **FE-04:** Show remote product images in cards and detail views with text alternatives, visible source/credit/license on detail, and graceful missing/broken-image fallbacks. Consume the amended Product DTO; keep existing cart and admin flows working.
+- **INF-03:** Copy the curated JSON into the API image and run enrichment after migrate and CSV seed on startup. Verify both existing and fresh SQLite volumes.
+- **QA-04:** Verify 85/85 seeded image URLs in the database/API, sample visual relevance and loading, attribution display, broken-image fallback, clean startup, README and memory accuracy.
 
 ## Original assignments
 

@@ -37,6 +37,11 @@ type Product = {
   currency: 'USD';
   stock: number;                // integer >= 0
   weight_kg: string;            // fixed decimal e.g. '0.250'
+  image_url: string | null;      // curated HTTPS image, null when unavailable
+  image_source_url: string | null; // source page for the image
+  image_attribution: string | null; // plain-text creator credit
+  image_license: string | null; // e.g. 'CC BY-SA 4.0' or 'CC0'
+  image_license_url: string | null;
   is_active: boolean;
   created_at: string;           // ISO UTC
   updated_at: string;
@@ -57,6 +62,8 @@ type ProductWrite = {
 **Write rules:** `POST` requires every key above except `description` (defaults to `""`); `PATCH` accepts any **nonempty subset** of these keys, with identical validation for supplied keys; no `id`, `is_active`, `price_cents`, timestamps, or `currency` accepted in request. Trim/collapse internal whitespace for category display name; stable lowercase hyphen slug and uniqueness. Create category only after product validations succeed. `price` is positive, max 2 decimals, max 999999999.99 USD; weight max 9999999.999 kg; reject exponents, commas, `NaN`, negative, boolean, and JSON numeric values for decimals. `stock` must be a JSON integer (never numeric string). `name`, `sku`, `category` must not be whitespace-only. `description` may be empty. `PATCH` cannot reactivate a soft-deleted product: no restore endpoint in MVP.
 
 **Public visibility:** `GET /products` and `GET /products/{id}` return only active items; admin list returns both active and inactive. Category filtering for public catalog includes categories even if currently empty only when persisted; `GET /categories` returns categories with **at least one active product** in alphabetic name order.
+
+**Image enrichment amendment (2026-10-16):** Product image fields are nullable response fields. Existing product writes and CSV header remain unchanged. A separate idempotent server-side catalog command reads `data/product-images.json`, matches normalized SKU, and fills image fields for seeded products after migration/CSV seed. Image URLs are direct HTTPS Wikimedia Commons thumbnail URLs; source, creator, and license metadata must travel with them so the UI can show attribution. The command must not overwrite a non-null image URL on restart. No image bytes are stored locally or in SQLite. Products without a curated match retain the existing visual fallback.
 
 ### 2.2 Error envelope (ALL non-2xx JSON errors)
 
