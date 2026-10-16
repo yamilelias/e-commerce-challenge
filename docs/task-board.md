@@ -81,7 +81,7 @@ Updated 2026-10-15. Statuses: BACKLOG, READY, IN_PROGRESS, REVIEW, DONE, BLOCKED
 ## Current blockers and gate notes
 
 - Gate A: contract freeze committed in `3532803`; QA acceptance mapping is in progress.
-- Gate B: Docker Compose static configuration and startup script syntax passed in INF-01. Docker build/start, proxied health and persistence are **NOT VERIFIED** because the host Docker daemon is unavailable. The API image also requires `apps/api/composer.lock`, which cannot yet be generated without PHP/Composer or a working container and package network. Backend seed command is still pending.
+- Gate B: Docker Compose static configuration and startup script syntax passed in INF-01. The Docker daemon became available later (`docker version` reported server 29.0.1), and image/runtime verification is now queued. The API image still requires `apps/api/composer.lock` and the backend seed command.
 - BE-01: migration SQL executed with Python SQLite and rejected invalid constraints; Composer, PHPUnit, Symfony HTTP and migration command remain **NOT VERIFIED** in this host.
 - FE-01: npm install, typecheck, lint and build passed; proxy fixture confirmed query/cookie/CSRF/idempotency/multipart forwarding. Live API and browser visual checks remain **NOT VERIFIED**.
 - QA-01: AC-01–21 and C-01–16 mapped; Python smoke script syntax passed, but 0/4 HTTP checks ran because local HTTP access was denied and no stack was available.
