@@ -13,5 +13,6 @@ This directory holds concise, durable facts needed to continue the e-commerce MV
 - [`decisions/backend-foundation.md`](decisions/backend-foundation.md): backend scaffold and SQLite connection choices.
 - [`structure/frontend.md`](structure/frontend.md): Next.js routes, proxy, UI components, and verification state.
 - [`decisions/frontend-foundation.md`](decisions/frontend-foundation.md): catalog and same-origin proxy choices.
+- [`structure/qa.md`](structure/qa.md): acceptance matrix and smoke check locations.
 
 Add an entry here when creating a new memory record. Update memory in the same commit as the implementation or contract change it describes.

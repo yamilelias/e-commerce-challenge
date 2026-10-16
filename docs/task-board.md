@@ -8,7 +8,7 @@ Updated 2026-10-15. Statuses: BACKLOG, READY, IN_PROGRESS, REVIEW, DONE, BLOCKED
 | BE-01 | 2 | Backend | P0 | ARCH-01 | B | REVIEW | `8e25cab` |
 | FE-01 | 2 | Frontend | P0 | ARCH-01 | B | REVIEW | `7923f45` |
 | INF-01 | 2 | DevOps | P0 | ARCH-01, BE-01, FE-01 runtime review | B | REVIEW | `f009cac`, `3e4d285` |
-| QA-01 | 1–2 | QA/Docs | P0 | ARCH-01 | A, B | READY | — |
+| QA-01 | 1–2 | QA/Docs | P0 | ARCH-01 | A, B | REVIEW | `940c5df` |
 | BE-02a | 3 | Backend | P0 | BE-01 | C | IN_PROGRESS | — |
 | BE-02b | 3 | Backend | P0 | BE-02a | C | BACKLOG | — |
 | BE-02c | 3 | Backend | P0 | BE-02b | C | BACKLOG | — |
@@ -16,7 +16,8 @@ Updated 2026-10-15. Statuses: BACKLOG, READY, IN_PROGRESS, REVIEW, DONE, BLOCKED
 | FE-02a | 3–4 | Frontend | P0 | FE-01, BE-02d contract | D | IN_PROGRESS | — |
 | FE-02b | 4 | Frontend | P0 | FE-01, BE-02a–c contract | D | BACKLOG | — |
 | INF-02 | 3–5 | DevOps | P0 | INF-01, BE-02a–d, FE-02a–b | B, E | BACKLOG | — |
-| QA-02 | 3–5 | QA/Docs | P0 | BE-02a–d, FE-02a–b, INF-01 | C–E | BACKLOG | — |
+| QA-02a | 3 | QA/Docs | P0 | BE-01, FE-01, INF-01 | C, D | IN_PROGRESS | — |
+| QA-02b | 4–5 | QA/Docs | P0 | BE-02a–d, FE-02a–b, INF-01 | C–E | BACKLOG | — |
 | QA-03 | 6 | QA/Docs | P0 | QA-02, INF-02 | F | BACKLOG | — |
 
 ## Ready assignments
@@ -73,7 +74,8 @@ Updated 2026-10-15. Statuses: BACKLOG, READY, IN_PROGRESS, REVIEW, DONE, BLOCKED
 - **FE-02a:** Product detail, persistent cart, checkout and receipt in `apps/web/**`; verify AC-03, AC-13–19. Use server total, stable idempotency key and token URL; retain cart on ambiguous failure. Run typecheck/lint/build and targeted behavior checks.
 - **FE-02b:** Admin login/logout, CRUD and import screens in `apps/web/**`; verify AC-04–08 and AC-11–12 using real API, including CSRF and row issue display. Run typecheck/lint/build and targeted behavior checks.
 - **INF-02:** integrate runtime, reliable startup/restart, persistent storage and security header/proxy behavior; verify infrastructure I-01–I-15.
-- **QA-02:** smoke, contract, browser, adverse checkout and restart checks; maintain `docs/qa/verification.md` and defects with real outcomes.
+- **QA-02a:** Focused static contract review of committed slices; record reproducible defects in `docs/qa/defects.md`, smoke script updates and real static evidence. Runtime remains NOT VERIFIED until stack runs.
+- **QA-02b:** HTTP smoke, contract, browser, adverse checkout and restart checks; maintain `docs/qa/verification.md` and defects with real outcomes.
 - **QA-03:** complete README, isolated cold-start test and GO/NO-GO release report.
 
 ## Current blockers and gate notes
@@ -82,3 +84,4 @@ Updated 2026-10-15. Statuses: BACKLOG, READY, IN_PROGRESS, REVIEW, DONE, BLOCKED
 - Gate B: Docker Compose static configuration and startup script syntax passed in INF-01. Docker build/start, proxied health and persistence are **NOT VERIFIED** because the host Docker daemon is unavailable. The API image also requires `apps/api/composer.lock`, which cannot yet be generated without PHP/Composer or a working container and package network. Backend seed command is still pending.
 - BE-01: migration SQL executed with Python SQLite and rejected invalid constraints; Composer, PHPUnit, Symfony HTTP and migration command remain **NOT VERIFIED** in this host.
 - FE-01: npm install, typecheck, lint and build passed; proxy fixture confirmed query/cookie/CSRF/idempotency/multipart forwarding. Live API and browser visual checks remain **NOT VERIFIED**.
+- QA-01: AC-01–21 and C-01–16 mapped; Python smoke script syntax passed, but 0/4 HTTP checks ran because local HTTP access was denied and no stack was available.
