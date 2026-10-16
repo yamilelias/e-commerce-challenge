@@ -16,5 +16,6 @@ This directory holds concise, durable facts needed to continue the e-commerce MV
 - [`structure/qa.md`](structure/qa.md): acceptance matrix and smoke check locations.
 - [`decisions/product-storage.md`](decisions/product-storage.md): normalized product validation and catalog storage decisions.
 - [`decisions/frontend-checkout.md`](decisions/frontend-checkout.md): cart, checkout retry, and receipt handling.
+- [`decisions/admin-session.md`](decisions/admin-session.md): backend session, CSRF, and origin protection.
 
 Add an entry here when creating a new memory record. Update memory in the same commit as the implementation or contract change it describes.
