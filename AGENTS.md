@@ -12,6 +12,10 @@ Keep durable project knowledge in `memory/` so a future agent can resume work wi
 
 Keep memory concise and factual. Link to detailed specifications in `docs/` instead of copying them. Never put secrets, credentials, or personal data in memory. When a public API or shared data shape changes, update the authoritative specification, dependent code/tests, and memory together, following the orchestrator's approval and coordination rules.
 
+## Reusable working instructions
+
+When an instruction would otherwise need to be repeated to subagents, or a preventable mistake reveals a useful working rule, add a concise, actionable instruction to this file during the task. Capture the general rule and its reason, not a one-off status update or lengthy incident history. Check this file before assigning work, include relevant new rules in active assignments or handoffs, and tell already active agents when an update affects their work. Commit updates to this file so future agents receive them.
+
 ## Commits and handoffs
 
 Commit every code change, including changes made by subagents. Commit related memory updates with the code they document. Use a descriptive commit subject that states the change, with a task ID when one has been assigned (for example, `BE-03: Add validated product CRUD endpoints`). Keep commits scoped; never include unrelated or pre-existing user files. Each subagent must report its commit hash, changed paths, and actual verification results in its handoff. Do not claim a change is complete until its required commit exists.
