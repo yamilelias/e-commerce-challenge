@@ -17,5 +17,6 @@ This directory holds concise, durable facts needed to continue the e-commerce MV
 - [`decisions/product-storage.md`](decisions/product-storage.md): normalized product validation and catalog storage decisions.
 - [`decisions/frontend-checkout.md`](decisions/frontend-checkout.md): cart, checkout retry, and receipt handling.
 - [`decisions/admin-session.md`](decisions/admin-session.md): backend session, CSRF, and origin protection.
+- [`decisions/frontend-admin.md`](decisions/frontend-admin.md): browser admin session and catalog management UI.
 
 Add an entry here when creating a new memory record. Update memory in the same commit as the implementation or contract change it describes.

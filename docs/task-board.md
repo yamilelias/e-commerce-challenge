@@ -14,10 +14,10 @@ Updated 2026-10-15. Statuses: BACKLOG, READY, IN_PROGRESS, REVIEW, DONE, BLOCKED
 | BE-02c | 3 | Backend | P0 | BE-02b | C | IN_PROGRESS | — |
 | BE-02d | 3 | Backend | P0 | BE-02c | C | BACKLOG | — |
 | FE-02a | 3–4 | Frontend | P0 | FE-01, BE-02d contract | D | REVIEW | `2cfc2d4` |
-| FE-02b | 4 | Frontend | P0 | FE-01, BE-02a–c contract | D | IN_PROGRESS | — |
-| INF-02 | 3–5 | DevOps | P0 | INF-01, BE-02a–d, FE-02a–b | B, E | BACKLOG | — |
+| FE-02b | 4 | Frontend | P0 | FE-01, BE-02a–c contract | D | REVIEW | `f73ade2` |
+| INF-02 | 3–5 | DevOps | P0 | INF-01, BE-02a–d, FE-02a–b | B, E | IN_PROGRESS | — |
 | QA-02a | 3 | QA/Docs | P0 | BE-01, FE-01, INF-01 | C, D | REVIEW | `448795f` |
-| QA-02b | 4–5 | QA/Docs | P0 | BE-02a–d, FE-02a–b, INF-01 | C–E | IN_PROGRESS | — |
+| QA-02b | 4–5 | QA/Docs | P0 | BE-02a–d, FE-02a–b, INF-01 | C–E | REVIEW | `9c7ca76` |
 | QA-03 | 6 | QA/Docs | P0 | QA-02, INF-02 | F | BACKLOG | — |
 
 ## Ready assignments
@@ -88,3 +88,4 @@ Updated 2026-10-15. Statuses: BACKLOG, READY, IN_PROGRESS, REVIEW, DONE, BLOCKED
 - QA-02a: static defects `QA-001` (missing Composer lock), `QA-002` (missing seed command), and `QA-003` (proxy `Location` response header) recorded in `docs/qa/defects.md`; no runtime checks passed.
 - FE-02a: typecheck/lint/build and targeted cart/retry/proxy assertions passed. Product detail, cart, checkout and receipt are committed; live seeded purchase remains **NOT VERIFIED**. The proxy `Location` forwarding fix awaits QA retest.
 - BE-02b: Composer lockfile, admin session/CSRF and product write endpoints committed. Docker PHPUnit passed 9 tests/33 assertions; `docker compose --env-file .env.example build api` exited 0. API startup still waits on BE-02c seed command.
+- FE-02b: admin login, CRUD and CSV import UI committed; typecheck/lint/build and targeted auth/multipart/proxy checks passed. Live admin journeys remain **NOT VERIFIED** pending BE-02c and Compose boot.
