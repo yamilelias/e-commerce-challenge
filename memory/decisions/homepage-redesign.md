@@ -1,7 +1,7 @@
 # Homepage editorial redesign
 
 - Date: 2026-10-16
-- Status: Contract frozen; implementation in progress
+- Status: Implemented and integrated; runtime checks are recorded in `docs/qa/home-redesign.md`.
 - Context: The existing homepage has a simple hero, four catalog cards, and category links. The user supplied `docs/redesign/` to guide an editorial redesign inspired by a Lovable listing while retaining the working commerce MVP.
 - Decision: Compose `/` from a CSS-led `HomeHero` and one client-owned `HomeSections` data loader, with `hero`, `collections`, `featured`, and `story` anchors. Keep `StoreHeader` and the footer shared across routes. Keep daisyUI colors, existing product DTOs, existing browser API client, and the CSS/reduced-motion based animation contract in `docs/redesign/DECISIONS.md`. The featured grid reads the first 16 API products and displays up to eight with distinct names free of angle-bracket markup.
 - Reason: One data loader avoids duplicate homepage requests; scoped components and motion keep the API and other commerce journeys stable. CSS placeholder media provides a reliable hero without inventing product claims or adding a new asset dependency. The wider product page keeps the intentional XSS fixture and repeated names out of the curated homepage without changing the API or hiding them from the catalog.

@@ -25,6 +25,8 @@ Install Docker Desktop (or Docker Engine with Compose v2) and Python 3. No host 
 
 Open <http://localhost:3000>. The `api` container runs migrations, the create-only CSV seed, and product image enrichment before it becomes healthy; the `web` container starts afterward. Only the web port is published, on loopback. Browser API calls go through the same-origin `/api/v1` proxy.
 
+The homepage uses an editorial hero, live category collections, eight featured catalog products, and a short brand section. Its cards come from the existing API, with loading and empty states; the catalog, cart, checkout, and admin routes continue to work as before. The homepage supports keyboard navigation and reduced-motion CSS. See the [redesign plan](docs/redesign/00-REDESIGN-ORCHESTRATOR.md) and [verification record](docs/qa/home-redesign.md).
+
 The original CSV has 97 data rows. A fresh seed inserts 85 products, skips 5 duplicate or blank rows, and rejects 7 invalid rows with reasons. A restart or repeat seed inserts none and preserves edits and purchased stock. Review the actual report with:
 
 ```sh
