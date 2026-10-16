@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { StoreHeader } from "@/components/layout/StoreHeader";
+import { CartProvider } from "@/features/cart/CartProvider";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -11,14 +13,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en" data-theme="garden">
       <body className="flex min-h-screen flex-col bg-base-200">
-        <header className="border-b border-base-300 bg-base-100">
-          <nav className="navbar mx-auto max-w-7xl gap-4 px-4 sm:px-6" aria-label="Main navigation">
-            <Link className="editorial mr-auto text-2xl font-bold tracking-tight text-primary" href="/">Field &amp; Form</Link>
-            <Link className="btn btn-ghost" href="/products">Shop</Link>
-            <Link className="btn btn-ghost" href="/cart">Cart</Link>
-          </nav>
-        </header>
-        <main className="flex-1">{children}</main>
+        <CartProvider>
+          <StoreHeader />
+          <main className="flex-1">{children}</main>
+        </CartProvider>
         <footer className="mt-16 border-t border-base-300 bg-base-100 py-10">
           <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 text-sm text-base-content/70 sm:flex-row sm:items-center sm:justify-between sm:px-6">
             <span>© {new Date().getFullYear()} Field &amp; Form</span>

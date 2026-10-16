@@ -1,4 +1,4 @@
-import type { ApiErrorResponse, DataResponse, ListResponse, Product, Category, ProductSort } from "./types";
+import type { ApiErrorResponse, DataResponse, ListResponse, Product, Category, ProductSort, OrderRequest, OrderConfirmation, OrderReceipt } from "./types";
 
 export class ApiRequestError extends Error {
   constructor(
@@ -12,12 +12,12 @@ export class ApiRequestError extends Error {
   }
 }
 
-async function getJson<T>(path: string, signal?: AbortSignal): Promise<T> {
+async function requestJson<T>(path: string, options: RequestInit = {}): Promise<T> {
   const response = await fetch(`/api/v1${path}`, {
     credentials: "same-origin",
     cache: "no-store",
-    headers: { Accept: "application/json" },
-    signal,
+    ...options,
+    headers: { Accept: "application/json", ...options.headers },
   });
   const payload: unknown = await response.json().catch(() => null);
   if (!response.ok) {
@@ -30,6 +30,10 @@ async function getJson<T>(path: string, signal?: AbortSignal): Promise<T> {
     );
   }
   return payload as T;
+}
+
+function getJson<T>(path: string, signal?: AbortSignal): Promise<T> {
+  return requestJson<T>(path, { signal });
 }
 
 export type ProductQuery = {
@@ -57,4 +61,20 @@ export function getProducts(query: ProductQuery = {}, signal?: AbortSignal): Pro
 
 export function getCategories(signal?: AbortSignal): Promise<DataResponse<Category[]>> {
   return getJson<DataResponse<Category[]>>("/categories", signal);
+}
+
+export function getProduct(id: number, signal?: AbortSignal): Promise<DataResponse<Product>> {
+  return getJson<DataResponse<Product>>(`/products/${id}`, signal);
+}
+
+export function createOrder(body: OrderRequest, key: string): Promise<DataResponse<OrderConfirmation>> {
+  return requestJson<DataResponse<OrderConfirmation>>("/orders", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "Idempotency-Key": key },
+    body: JSON.stringify(body),
+  });
+}
+
+export function getOrder(reference: string, token: string, signal?: AbortSignal): Promise<DataResponse<OrderReceipt>> {
+  return getJson<DataResponse<OrderReceipt>>(`/orders/${encodeURIComponent(reference)}?token=${encodeURIComponent(token)}`, signal);
 }

@@ -56,6 +56,8 @@ async function forward(request: NextRequest, context: Context): Promise<Response
       const value = upstream.headers.get(name);
       if (value !== null) responseHeaders.set(name, value);
     }
+    const location = upstream.headers.get("location");
+    if (location && /^\/api\/v1\/products\/[1-9][0-9]*$/.test(location)) responseHeaders.set("location", location);
     for (const cookie of upstream.headers.getSetCookie()) responseHeaders.append("set-cookie", cookie);
     responseHeaders.set("cache-control", "no-store");
     return new Response(upstream.body, { status: upstream.status, headers: responseHeaders });
