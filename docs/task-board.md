@@ -7,7 +7,7 @@ Updated 2026-10-15. Statuses: BACKLOG, READY, IN_PROGRESS, REVIEW, DONE, BLOCKED
 | ARCH-01 | 1 | Orchestrator | P0 | — | A | DONE | board introduction commit |
 | BE-01 | 2 | Backend | P0 | ARCH-01 | B | IN_PROGRESS | — |
 | FE-01 | 2 | Frontend | P0 | ARCH-01 | B | IN_PROGRESS | — |
-| INF-01 | 2 | DevOps | P0 | ARCH-01, BE-01, FE-01 runtime review | B | IN_PROGRESS | — |
+| INF-01 | 2 | DevOps | P0 | ARCH-01, BE-01, FE-01 runtime review | B | REVIEW | `f009cac`, `3e4d285` |
 | QA-01 | 1–2 | QA/Docs | P0 | ARCH-01 | A, B | READY | — |
 | BE-02 | 3 | Backend | P0 | BE-01 | C | BACKLOG | — |
 | FE-02 | 3–4 | Frontend | P0 | FE-01, BE-02 API | D | BACKLOG | — |
@@ -67,3 +67,8 @@ Updated 2026-10-15. Statuses: BACKLOG, READY, IN_PROGRESS, REVIEW, DONE, BLOCKED
 - **INF-02:** integrate runtime, reliable startup/restart, persistent storage and security header/proxy behavior; verify infrastructure I-01–I-15.
 - **QA-02:** smoke, contract, browser, adverse checkout and restart checks; maintain `docs/qa/verification.md` and defects with real outcomes.
 - **QA-03:** complete README, isolated cold-start test and GO/NO-GO release report.
+
+## Current blockers and gate notes
+
+- Gate A: contract freeze committed in `3532803`; QA acceptance mapping is in progress.
+- Gate B: Docker Compose static configuration and startup script syntax passed in INF-01. Docker build/start, proxied health and persistence are **NOT VERIFIED** because the host Docker daemon is unavailable. The API image also requires `apps/api/composer.lock`, which cannot yet be generated without PHP/Composer or a working container and package network. Backend seed command is still pending.
