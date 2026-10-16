@@ -1,0 +1,23 @@
+.reveal {
+  --reveal-delay: 0ms;
+}
+
+.reveal[data-reveal-state="waiting"] {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.reveal[data-reveal-state="visible"] {
+  transition:
+    opacity var(--home-motion-reveal, 560ms) var(--home-motion-ease, cubic-bezier(.22, 1, .36, 1)) var(--reveal-delay),
+    transform var(--home-motion-reveal, 560ms) var(--home-motion-ease, cubic-bezier(.22, 1, .36, 1)) var(--reveal-delay);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal[data-reveal-state="waiting"],
+  .reveal[data-reveal-state="visible"] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
