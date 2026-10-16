@@ -9,15 +9,15 @@ Updated 2026-10-15. Statuses: BACKLOG, READY, IN_PROGRESS, REVIEW, DONE, BLOCKED
 | FE-01 | 2 | Frontend | P0 | ARCH-01 | B | REVIEW | `7923f45` |
 | INF-01 | 2 | DevOps | P0 | ARCH-01, BE-01, FE-01 runtime review | B | REVIEW | `f009cac`, `3e4d285` |
 | QA-01 | 1–2 | QA/Docs | P0 | ARCH-01 | A, B | REVIEW | `940c5df` |
-| BE-02a | 3 | Backend | P0 | BE-01 | C | IN_PROGRESS | — |
-| BE-02b | 3 | Backend | P0 | BE-02a | C | BACKLOG | — |
+| BE-02a | 3 | Backend | P0 | BE-01 | C | REVIEW | `60db5f4` |
+| BE-02b | 3 | Backend | P0 | BE-02a | C | IN_PROGRESS | — |
 | BE-02c | 3 | Backend | P0 | BE-02b | C | BACKLOG | — |
 | BE-02d | 3 | Backend | P0 | BE-02c | C | BACKLOG | — |
 | FE-02a | 3–4 | Frontend | P0 | FE-01, BE-02d contract | D | IN_PROGRESS | — |
 | FE-02b | 4 | Frontend | P0 | FE-01, BE-02a–c contract | D | BACKLOG | — |
 | INF-02 | 3–5 | DevOps | P0 | INF-01, BE-02a–d, FE-02a–b | B, E | BACKLOG | — |
-| QA-02a | 3 | QA/Docs | P0 | BE-01, FE-01, INF-01 | C, D | IN_PROGRESS | — |
-| QA-02b | 4–5 | QA/Docs | P0 | BE-02a–d, FE-02a–b, INF-01 | C–E | BACKLOG | — |
+| QA-02a | 3 | QA/Docs | P0 | BE-01, FE-01, INF-01 | C, D | REVIEW | `448795f` |
+| QA-02b | 4–5 | QA/Docs | P0 | BE-02a–d, FE-02a–b, INF-01 | C–E | IN_PROGRESS | — |
 | QA-03 | 6 | QA/Docs | P0 | QA-02, INF-02 | F | BACKLOG | — |
 
 ## Ready assignments
@@ -85,3 +85,4 @@ Updated 2026-10-15. Statuses: BACKLOG, READY, IN_PROGRESS, REVIEW, DONE, BLOCKED
 - BE-01: migration SQL executed with Python SQLite and rejected invalid constraints; Composer, PHPUnit, Symfony HTTP and migration command remain **NOT VERIFIED** in this host.
 - FE-01: npm install, typecheck, lint and build passed; proxy fixture confirmed query/cookie/CSRF/idempotency/multipart forwarding. Live API and browser visual checks remain **NOT VERIFIED**.
 - QA-01: AC-01–21 and C-01–16 mapped; Python smoke script syntax passed, but 0/4 HTTP checks ran because local HTTP access was denied and no stack was available.
+- QA-02a: static defects `QA-001` (missing Composer lock), `QA-002` (missing seed command), and `QA-003` (proxy `Location` response header) recorded in `docs/qa/defects.md`; no runtime checks passed.
