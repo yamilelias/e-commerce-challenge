@@ -24,6 +24,17 @@ final class ApiExceptionSubscriber implements EventSubscriberInterface
         }
 
         $exception = $event->getThrowable();
+        if ($exception instanceof ApiProblem) {
+            $event->setResponse(new JsonResponse([
+                'error' => [
+                    'code' => $exception->errorCode,
+                    'message' => $exception->getMessage(),
+                    'fields' => $exception->fields === [] ? new \stdClass() : $exception->fields,
+                ],
+            ], $exception->status, ['Content-Type' => 'application/json; charset=utf-8']));
+
+            return;
+        }
         $status = $exception instanceof HttpExceptionInterface ? $exception->getStatusCode() : 500;
         $code = match ($status) {
             404 => 'NOT_FOUND',
