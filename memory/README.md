@@ -19,5 +19,6 @@ This directory holds concise, durable facts needed to continue the e-commerce MV
 - [`decisions/admin-session.md`](decisions/admin-session.md): backend session, CSRF, and origin protection.
 - [`decisions/frontend-admin.md`](decisions/frontend-admin.md): browser admin session and catalog management UI.
 - [`decisions/csv-import.md`](decisions/csv-import.md): create-only CSV import and seed behavior.
+- [`decisions/atomic-checkout.md`](decisions/atomic-checkout.md): stock transaction, idempotency, and receipt capability.
 
 Add an entry here when creating a new memory record. Update memory in the same commit as the implementation or contract change it describes.

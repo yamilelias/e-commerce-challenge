@@ -12,7 +12,7 @@ Updated 2026-10-15. Statuses: BACKLOG, READY, IN_PROGRESS, REVIEW, DONE, BLOCKED
 | BE-02a | 3 | Backend | P0 | BE-01 | C | REVIEW | `60db5f4` |
 | BE-02b | 3 | Backend | P0 | BE-02a | C | REVIEW | `f58e45c` |
 | BE-02c | 3 | Backend | P0 | BE-02b | C | REVIEW | `0a0729d` |
-| BE-02d | 3 | Backend | P0 | BE-02c | C | IN_PROGRESS | — |
+| BE-02d | 3 | Backend | P0 | BE-02c | C | REVIEW | `03099ff` |
 | FE-02a | 3–4 | Frontend | P0 | FE-01, BE-02d contract | D | REVIEW | `2cfc2d4` |
 | FE-02b | 4 | Frontend | P0 | FE-01, BE-02a–c contract | D | REVIEW | `f73ade2` |
 | INF-02 | 3–5 | DevOps | P0 | INF-01, BE-02a–d, FE-02a–b | B, E | REVIEW | `e8933c6` |
@@ -91,3 +91,4 @@ Updated 2026-10-15. Statuses: BACKLOG, READY, IN_PROGRESS, REVIEW, DONE, BLOCKED
 - FE-02b: admin login, CRUD and CSV import UI committed; typecheck/lint/build and targeted auth/multipart/proxy checks passed. Live admin journeys remain **NOT VERIFIED** pending BE-02c and Compose boot.
 - BE-02c: shared importer, protected upload and seed command committed. Disposable SQLite migration + seed accepted 85, skipped 5 and rejected 7 rows; repeat inserted 0. PHP lint and PHPUnit 12 tests/46 assertions passed. Isolated Compose boot is in progress.
 - INF-02: isolated `ecommerce-inf02` Compose build/start exited 0 with both services healthy and proxied DB-aware health 200. Migration applied; 85 products persisted across `down`/`up -d`; repeat seed inserted 0. Runtime fixes committed `e8933c6`.
+- BE-02d: atomic checkout/receipt committed; PHP lint and PHPUnit 17 tests/89 assertions passed, including a two-process last-stock race. Live proxy checkout retest is pending the rebuilt isolated stack.
