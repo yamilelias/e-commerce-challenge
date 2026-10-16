@@ -1,7 +1,7 @@
 # 02 — Technical Architecture & Frozen Integration Boundaries
 
 **Project:** Weekend E-Commerce MVP  
-**Status:** Proposed Phase-1 architecture contract; orchestrator must approve and freeze the marked interfaces before parallel implementation.  
+**Status:** Phase-1 schema and integration boundaries frozen by the orchestrator on 2026-10-15.
 **Owner:** Orchestrator / Tech Lead  
 **References:** [`00-ORCHESTRATOR.md`](./00-ORCHESTRATOR.md), [`01-PRODUCT.md`](./01-PRODUCT.md)  
 **Budget:** ~16 elapsed hours targeted; maximum ~20 focused execution hours including a 2-hour stabilization reserve.  

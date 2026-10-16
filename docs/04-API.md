@@ -1,7 +1,7 @@
 # 04 — API Contract (Frozen v1)
 
 **Project:** Weekend E-Commerce MVP  
-**Status:** Phase 1 freeze candidate; the orchestrator must approve this exact contract before parallel feature implementation.  
+**Status:** API v1 frozen by the orchestrator on 2026-10-15; amendments require the coordination process in Section 12.
 **Owner:** Orchestrator / Tech Lead; implementation owner: Backend; consumer: Frontend; verification owner: QA.  
 **References:** [`00-ORCHESTRATOR.md`](./00-ORCHESTRATOR.md), [`01-PRODUCT.md`](./01-PRODUCT.md), [`02-ARCHITECTURE.md`](./02-ARCHITECTURE.md).  
 **Delivery constraint:** ~16 elapsed hours target, hard weekend limit; no extra services, background imports, customer accounts, payment provider, or API SDK generation.
