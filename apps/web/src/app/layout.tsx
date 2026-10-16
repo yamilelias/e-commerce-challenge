@@ -15,7 +15,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body className="flex min-h-screen flex-col bg-base-200">
         <CartProvider>
           <StoreHeader />
-          <main className="flex-1">{children}</main>
+          <main id="main-content" className="flex-1">{children}</main>
         </CartProvider>
         <footer className="mt-16 border-t border-base-300 bg-base-100 py-10">
           <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 text-sm text-base-content/70 sm:flex-row sm:items-center sm:justify-between sm:px-6">

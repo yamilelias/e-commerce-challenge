@@ -31,7 +31,17 @@
   --radius-box: 1.25rem;
 }
 
-:root { background: #f5f3e9; color: #202822; }
+:root {
+  background: #f5f3e9;
+  color: #202822;
+  --home-motion-fast: 180ms;
+  --home-motion-standard: 320ms;
+  --home-motion-reveal: 560ms;
+  --home-motion-hero: 650ms;
+  --home-motion-stagger: 80ms;
+  --home-motion-ambient: 12s;
+  --home-motion-ease: cubic-bezier(.22, 1, .36, 1);
+}
 body { min-height: 100vh; }
 *:focus-visible { outline: 3px solid #a36b16; outline-offset: 3px; }
 .editorial { font-family: Georgia, "Times New Roman", serif; }
