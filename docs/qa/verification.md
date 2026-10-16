@@ -90,4 +90,25 @@ Manual Chrome browser checks at 375px and 1440px found no horizontal overflow on
 
 For persistence, a disposable fake paid order was created on `ecommerce-inf02`; its reference and token were written only to a mode-0600 private temporary file. `WEB_PORT=3300 PUBLIC_ORIGIN=http://localhost:3300 docker compose -p ecommerce-inf02 down` exited 0, followed by the matching `up -d` exiting 0 with API healthy. After restart, proxied health, the paid receipt with the same token/total, and the purchased product's decremented stock all passed. The temporary state file was deleted. The command omitted `-v`, preserving the named SQLite volume.
 
-`apps/api` PHPUnit passed 17 tests and 89 assertions at BE-02d, including a two-process last-stock race. The separate clean-room setup check is recorded below when completed.
+`apps/api` PHPUnit passed 17 tests and 89 assertions at BE-02d, including a two-process last-stock race.
+
+## QA-03 fresh-clone delivery check, 2026-10-16
+
+`git clone --local . /private/tmp/ecommerce-challenge-cleanroom-20261016` exited 128 because sandboxing denied Git hard links. `git clone --no-local . /private/tmp/ecommerce-challenge-cleanroom-20261016` exited 0. The clone contained only committed files at `87c4b54`. A private `.env` was generated with independent random secrets, a temporary test admin, a PHP `password_hash()` made by the README's Docker image, and the paired port/origin `3301`. The test password and secrets were never committed.
+
+| Fresh-clone command (run in clone unless noted) | Exit | Observed result |
+|---|---:|---|
+| `docker compose -p ecommerce-cleanroom up --build -d` | 0 | New `ecommerce-cleanroom_ecommerce_data` volume created. API migration 1/1; first seed: total 97, inserted 85, skipped 5, rejected 7. Both service images built with Next 16.4.2; API became healthy before web started. |
+| `docker compose -p ecommerce-cleanroom ps` | 0 | API healthy, web published only on `127.0.0.1:3301`; web was still in initial health grace period at this instant. Subsequent HTTP smoke passed. |
+| `python3 scripts/smoke/public_api.py --base-url http://localhost:3301` | 0 | 5/5 PASS. |
+| `python3 scripts/smoke/admin_api.py --base-url http://localhost:3301 --username admin --password-file <private file>` | 0 | 21/21 PASS; two uploads on already seeded DB returned 0 inserted, 90 skipped, 7 rejected. |
+| `python3 scripts/smoke/checkout_api.py --base-url http://localhost:3301` | 0 | 6/6 PASS on the committed script in that clone. The subsequent extended script passed 7/7 on the main isolated stack, adding client-price rejection and malformed receipt token. |
+| `docker build --target test -t ecommerce-api-test -f apps/api/Dockerfile .` and `docker run --rm ecommerce-api-test vendor/bin/phpunit` | 0 each | 17 tests, 89 assertions passed in PHP 8.3.35. |
+| `docker run --rm -v "$PWD/apps/web:/app" -w /app node:22-bookworm-slim sh -c 'npm ci && npm run typecheck && npm run lint && npm run build'` | 0 | All three checks passed with Next 16.4.2; npm reported five development-chain advisories. |
+| `docker compose -p ecommerce-cleanroom exec -T api php bin/console app:products:seed --file=/app/data/products.csv` | 0 | Repeat inserted 0, skipped 90, rejected 7. A seeded product temporarily changed from $6.99 to $6.98 stayed $6.98 after seed; original price was restored afterward. |
+
+Browser verification on the fresh-clone app: admin sign-in reached the real product list; a temporary product was created, edited from $24.50/stock 3 to $25.75/stock 4, then deactivated. Public GET returned 404 after deactivation. Uploading the supplied CSV twice from `/admin/import` displayed total 97, inserted 0, skipped 90, rejected 7, and row-level reasons on both reports. On storefront search, mixed-case `air`/`AIR` matched the same IDs, category filtering returned only the requested category, and page 2 with `per_page=1` returned one item. The literal XSS-like CSV name displayed as text in the admin table.
+
+Additional disposable API probes: an inactive product checkout returned `PRODUCT_UNAVAILABLE` 409; an order item with a client-supplied price returned `VALIDATION_ERROR` 422; after a purchased product was soft-deleted, public detail returned 404 while its paid receipt kept the original name and 1234-cent total. In the browser, a two-unit cart stayed intact when a competing fake purchase reduced current stock to one. Checkout displayed the unavailable-stock warning and disabled the order button; the cart was then cleared, and the test product was deactivated. One initial probe exited 1 because the probe expected the internal database field `name_snapshot` in the public response; the contract field is `name`. The corrected probe exited 0; this was a test assertion error, not an application defect.
+
+**Release gate assessment:** Gates A–F pass on the checks above. The remaining documented limitation is SQLite's built-in Unicode case folding for accented search terms (QA-004). Production npm audit reports zero vulnerabilities; five high advisories remain in development-only ESLint dependencies.

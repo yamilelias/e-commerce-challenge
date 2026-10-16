@@ -25,7 +25,7 @@ Install Docker Desktop (or Docker Engine with Compose v2) and Python 3. No host 
 
 Open <http://localhost:3000>. The `api` container runs the migration and create-only CSV seed before it becomes healthy; the `web` container starts afterward. Only the web port is published, on loopback. Browser API calls go through the same-origin `/api/v1` proxy.
 
-The original CSV has 97 data rows. A fresh seed inserts 85 products, skips 5 duplicate SKUs, and rejects 7 invalid rows with reasons. A restart or repeat seed inserts none and preserves edits and purchased stock. Review the actual report with:
+The original CSV has 97 data rows. A fresh seed inserts 85 products, skips 5 duplicate or blank rows, and rejects 7 invalid rows with reasons. A restart or repeat seed inserts none and preserves edits and purchased stock. Review the actual report with:
 
 ```sh
 docker compose logs api

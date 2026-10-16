@@ -60,15 +60,21 @@ def run(origin):
     expect(status == 200 and detail.get("data", {}).get("stock") == initial_stock - 1, "failed checkout changed stock")
     print("PASS insufficient stock rolls back")
 
+    tampered = {**body, "items": [{"product_id": product_id, "quantity": 1, "unit_price_cents": 1}]}
+    error_is(client.json("POST", "/api/v1/orders", tampered,
+                         extra_headers={"Idempotency-Key": str(uuid.uuid4())}), 422, "VALIDATION_ERROR")
+    print("PASS client-supplied price rejected")
+
     receipt_path = "/api/v1/orders/" + quote(reference)
     error_is(client.request("GET", receipt_path), 400, "BAD_QUERY")
+    error_is(client.request("GET", receipt_path + "?token=malformed"), 400, "BAD_QUERY")
     wrong = "0" * 64 if token != "0" * 64 else "1" * 64
     error_is(client.request("GET", receipt_path + "?token=" + wrong), 404, "NOT_FOUND")
     status, receipt, _ = client.request("GET", receipt_path + "?token=" + quote(token))
     expect(status == 200 and receipt.get("data", {}).get("reference") == reference
            and "receipt_token" not in receipt.get("data", {}), "receipt lookup leaked or failed")
     print("PASS receipt capability enforcement")
-    print("Summary: 6/6 passed")
+    print("Summary: 7/7 passed")
     return 0
 
 
