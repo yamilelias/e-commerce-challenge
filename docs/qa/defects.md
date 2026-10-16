@@ -1,6 +1,6 @@
 # Defect and integration blocker log
 
-These findings began with static review of the committed foundation at `940c5df` on 2026-10-15 (America/Chihuahua). Later retests are identified per entry. Runtime behavior remains **NOT VERIFIED** except where an exact command/result is recorded. Owners should retest against the current integrated commit.
+These findings began with static review of the committed foundation at `940c5df` on 2026-10-15 (America/Chihuahua). Later runtime retests are identified per entry. The current integrated results are in [verification.md](verification.md).
 
 ## QA-001 — Docker build references absent Composer lockfile
 
@@ -12,19 +12,19 @@ These findings began with static review of the committed foundation at `940c5df`
 
 ## QA-002 — API startup invokes an unavailable seed command
 
-- Severity: **P0**; status: **OPEN**; owner: Backend (command), DevOps (startup integration); related: AC-01–03, C-02, Gate B.
+- Severity: **P0**; status: **VERIFIED** fixed after BE-02c `0a0729d` and isolated Compose boot; owner: Backend (command), DevOps (startup integration); related: AC-01–03, C-02, Gate B.
 - Reproduce: `rg -n 'app:products:seed' infra/docker/api/start.sh` finds the startup invocation; `rg -n 'AsCommand|app:products:seed' apps/api/src` finds no command declaration in the committed foundation.
 - Expected: The same importer exposed by a registered `app:products:seed` command runs successfully after migrations, including row-level rejects.
-- Actual static observation: `start.sh` has `set -eu` and invokes the command before FrankenPHP. An unknown command will stop the API container; this is a pending BE-02/INF-01 dependency.
-- Retest: With image built, run the seed command in an isolated API container and `docker compose up --build -d`; record command exits, seed report, and proxied health.
+- Original static observation: `start.sh` had `set -eu` and invoked the command before FrankenPHP. The command was absent in the reviewed checkout.
+- Retest evidence: BE-02c added the seed command. DevOps reported isolated `ecommerce-inf02` `docker compose ... up --build -d` exit 0, proxied health 200, first seed 85 inserted/5 skipped/7 rejected and rerun 0/90/7. QA independently ran `public_api.py` at `localhost:3300` with health PASS. Full clean-room README setup remains separate.
 
 ## QA-003 — Proxy drops product creation Location header
 
-- Severity: **P1** contract discrepancy; status: **READY_FOR_RETEST** after FE-02a `2cfc2d4`; owner: Frontend; related: C-06, AC-04.
+- Severity: **P1** contract discrepancy; status: **VERIFIED** after FE-02a `2cfc2d4` and proxied HTTP retest; owner: Frontend; related: C-06, AC-04.
 - Original reproduction: In FE-01 `7923f45`, inspect `apps/web/src/app/api/v1/[...path]/route.ts`: the response-header allowlist omitted `location`. The frozen `docs/04-API.md` Section 6.3 requires `Location: /api/v1/products/{id}` on `POST /products` success.
 - Expected: Browser-facing proxy returns the backend's `Location` value with the 201 response.
 - Original static observation: `forward()` created a new `Headers` object and copied only the listed headers plus `Set-Cookie`, discarding `Location`. FE-02a now copies a `Location` matching `/api/v1/products/{positive-id}`; this is a **static fix only**, with no HTTP evidence yet.
-- Retest: After authenticated create, inspect proxied 201 response headers and verify the documented path. Avoid logging credentials or CSRF values.
+- Retest evidence: QA ran `scripts/smoke/admin_api.py` through `localhost:3300`; authenticated product create returned 201 with the expected `/api/v1/products/{id}` `Location`, without printing credentials or CSRF values. Full browser admin journey remains separate.
 
 ## QA-004 — SQLite search Unicode casefold limitation
 

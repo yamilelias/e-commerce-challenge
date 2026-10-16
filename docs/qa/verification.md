@@ -2,9 +2,9 @@
 
 QA-01 baseline, 2026-10-15 (America/Chihuahua). Contract baseline: `3532803`. The [acceptance matrix](acceptance-matrix.md) remains **NOT VERIFIED** for runtime behavior. Record subsequent runs here with the exact command, exit code, observed output summary, environment, and redacted evidence. Do not paste secrets, cookies, CSRF tokens, idempotency keys, receipt tokens, or full receipt URLs.
 
-## Current blocker
+## Historical QA-01 blocker (resolved)
 
-Docker CLI is present, but the Docker daemon is unavailable at the local socket. The backend also has no committed Composer lockfile at this point. Container startup, API HTTP smoke, backend tests, migrations, seed, and persistence are **NOT VERIFIED**. No release gate is signed by this document.
+At the QA-01 baseline, Docker CLI was present but its daemon was unavailable, and the backend had no committed Composer lockfile. Both conditions were resolved in later increments. The results below retain the historical failed commands; current gate evidence appears at the end of this file.
 
 ## QA-01 commands and observed results
 
@@ -61,3 +61,33 @@ Static review of committed BE-02b checked `AdminSession::requireAdmin()` before 
 | `PYTHONPYCACHEPREFIX=/tmp/qa02b-pycache python3 -m py_compile scripts/smoke/public_api.py` | 0 | Smoke script syntax check passed. |
 | `python3 scripts/smoke/public_api.py --help` | 0 | CLI help displayed. |
 | `docker compose --env-file .env.example config --quiet` | 0 | Compose config parsed. This does not verify required private values or startup. |
+
+## QA-02c preparation and image-build evidence
+
+DevOps reported the isolated web image build command `WEB_PORT=3300 PUBLIC_ORIGIN=http://localhost:3300 docker compose -p ecommerce-inf02 build web` exiting **0**; Next compile and TypeScript checks passed. The build reported eight npm dependency advisories (seven high, one critical). Their package paths, reachability, and fixes have **not been triaged**; this is not an assigned defect severity or a release decision. Web image build does not prove boot, UI flows, or persistence.
+
+| QA preparation command | Exit | Actual result |
+|---|---:|---|
+| `PYTHONPYCACHEPREFIX=/tmp/qa02c-pycache python3 -m py_compile scripts/smoke/public_api.py scripts/smoke/admin_api.py` | 0 | Both smoke scripts compile. |
+| `python3 scripts/smoke/admin_api.py --help` | 0 | Authenticated smoke CLI displays expected arguments. |
+
+The new admin script uses a private password file, a cookie jar, a random disposable SKU, and a best-effort cleanup for its own fixture. It prints counts and assertion summaries, never credentials, CSRF, cookies, or receipt capabilities. The paragraph above records the preparation state; HTTP results follow.
+
+## Integrated runtime, 2026-10-16
+
+Environment: Docker Desktop, isolated Compose project `ecommerce-inf02`, browser-facing `http://localhost:3300`, private `.env`, API internal only. No receipt capability or credentials are recorded here.
+
+| Command / check | Exit | Observed result |
+|---|---:|---|
+| `WEB_PORT=3300 PUBLIC_ORIGIN=http://localhost:3300 docker compose -p ecommerce-inf02 up --build -d web` | 0 | Next.js 16.4.2 production image compiled; both containers started, API healthy. |
+| `python3 scripts/smoke/public_api.py --base-url http://localhost:3300` | 0 | 5/5 PASS: health, catalog, categories, empty search/pagination, bad query and anonymous admin. |
+| `python3 scripts/smoke/admin_api.py --base-url http://localhost:3300 --username admin --password-file <private file>` | 0 | 21/21 PASS: session and CSRF/Origin guards, CRUD, validation, proxy `Location`, search, two CSV uploads, delete, logout. Both uploads on seeded DB inserted 0, skipped 90, rejected 7. |
+| `python3 scripts/smoke/checkout_api.py --base-url http://localhost:3300` | 0 | 6/6 PASS: paid order and price snapshot, stock delta, identical replay, changed-body conflict, insufficient-stock rollback, receipt access rules. |
+| `npm run typecheck` and `npm run lint` in `apps/web` | 0 each | TypeScript and ESLint passed after dependency update. Docker web build also ran Next production build successfully. |
+| `npm audit --omit=dev --audit-level=moderate` in `apps/web` | 0 | Found zero production vulnerabilities. Full `npm audit --json` reports five high advisories through the development ESLint chain. |
+
+Manual Chrome browser checks at 375px and 1440px found no horizontal overflow on catalog or admin login. Catalog search for `air` returned Air Purifier and Camping Chair; product detail showed stock and weight. Cart quantity 2 showed the expected $379.98 subtotal and survived refresh. A separate Air Purifier browser purchase reached a paid $189.99 receipt and cleared the cart. These were real calls through the web proxy, not mocked responses.
+
+For persistence, a disposable fake paid order was created on `ecommerce-inf02`; its reference and token were written only to a mode-0600 private temporary file. `WEB_PORT=3300 PUBLIC_ORIGIN=http://localhost:3300 docker compose -p ecommerce-inf02 down` exited 0, followed by the matching `up -d` exiting 0 with API healthy. After restart, proxied health, the paid receipt with the same token/total, and the purchased product's decremented stock all passed. The temporary state file was deleted. The command omitted `-v`, preserving the named SQLite volume.
+
+`apps/api` PHPUnit passed 17 tests and 89 assertions at BE-02d, including a two-process last-stock race. The separate clean-room setup check is recorded below when completed.

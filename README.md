@@ -1,42 +1,87 @@
 # E-Commerce Challenge
 
-Weekend MVP in progress: a Next.js storefront and admin UI use a same-origin `/api/v1` proxy to reach a Symfony API backed by persistent SQLite. The supplied [CSV](data/products.csv) is the seed input; the [landing-page image](docs/reference/landing-page.png) is a visual reference. See the [orchestrator](docs/00-ORCHESTRATOR.md) and [frozen API contract](docs/04-API.md) for intended behavior.
+A local e-commerce MVP with a Next.js storefront and admin UI, a Symfony API, and persistent SQLite. The supplied [product CSV](data/products.csv) seeds the catalog; the [landing-page image](docs/reference/landing-page.png) guided the responsive layout. Checkout simulates payment and creates a paid order; it does not charge a card.
 
-## Current status
+## Prerequisites and setup
 
-Foundation code is being implemented. Clean Docker startup, migrations, seed, feature flows, and the setup commands have **not been runtime verified**. Follow [QA evidence](docs/qa/verification.md) and the [acceptance matrix](docs/qa/acceptance-matrix.md) for actual results. This is a Phase 1–2 draft, not yet a reproducible installation guide.
+Install Docker Desktop (or Docker Engine with Compose v2) and Python 3. No host PHP or Node.js is needed. Keep the app on localhost: the development session cookie permits HTTP, and this stack is not configured for public deployment.
 
-## Planned local setup — NOT VERIFIED
+1. Copy `.env.example` to `.env`.
+2. Generate two **different** secrets with `openssl rand -hex 32`; enter them as `APP_SECRET` and `RECEIPT_SECRET` in `.env`.
+3. Choose a private `ADMIN_USERNAME`. Generate an admin password hash without placing the password on a command line:
 
-The repository contains `.env.example` and `compose.yaml`. They define a web service on loopback port `WEB_PORT` (default `3000`), an internal API service, and a named SQLite volume. Required private values are `APP_SECRET`, `ADMIN_USERNAME`, `ADMIN_PASSWORD_HASH`, `RECEIPT_SECRET`, and `PUBLIC_ORIGIN`. Replace every placeholder in a private `.env`; never commit it. The exact password-hash generation and first-boot commands await runtime verification from Backend and DevOps. Do not use placeholder values as credentials.
+   ```sh
+   docker run --rm -it php:8.3-cli php -r '$password = trim(fgets(STDIN)); echo password_hash($password, PASSWORD_DEFAULT), PHP_EOL;'
+   ```
 
-Once prerequisites are established, the intended browser address is `http://localhost:3000`, with browser API requests at `http://localhost:3000/api/v1/*`. The API container is not exposed directly to the host. HTTP localhost is a development-only exception to HTTPS cookie security.
+   Type the password at the prompt, then copy only the resulting hash into `ADMIN_PASSWORD_HASH` in `.env`. Enclose the hash in single quotes so Compose does not interpret its `$` characters. Keep `.env` private; it is Git ignored.
+4. Leave `WEB_PORT=3000` and `PUBLIC_ORIGIN=http://localhost:3000` together, or change both to the same port. Start from the repository root:
 
-## Planned user journeys — NOT VERIFIED
+   ```sh
+   docker compose up --build -d
+   docker compose ps
+   python3 scripts/smoke/public_api.py
+   ```
 
-- Browse/search products, adjust a cart, submit guest details, and see a fake-paid order confirmation.
-- Sign in as administrator, create/edit/deactivate products, and upload CSV with row-level feedback.
-- Seed the original CSV on first boot and rerun the create-only importer without overwriting products.
+Open <http://localhost:3000>. The `api` container runs the migration and create-only CSV seed before it becomes healthy; the `web` container starts afterward. Only the web port is published, on loopback. Browser API calls go through the same-origin `/api/v1` proxy.
 
-The source CSV intentionally contains invalid and duplicate records. Valid rows should be imported; rejected and skipped rows should be reported. Accepted-row totals must come from an actual run.
+The original CSV has 97 data rows. A fresh seed inserts 85 products, skips 5 duplicate SKUs, and rejects 7 invalid rows with reasons. A restart or repeat seed inserts none and preserves edits and purchased stock. Review the actual report with:
 
-## Test plan
+```sh
+docker compose logs api
+docker compose exec api php bin/console app:products:seed --file=/app/data/products.csv
+```
 
-`python3 scripts/smoke/public_api.py` is a read-only proxy smoke check for health, catalog envelopes, categories, query errors, and anonymous admin access. It requires a running stack and Python 3. It exits nonzero on failure and never prints credentials. Its syntax is checked in [QA evidence](docs/qa/verification.md); an HTTP pass is pending.
+## Use the application
 
-Backend tests, authenticated CRUD/import, checkout replay/stock checks, browser journeys, restart persistence, and README-only cold setup remain pending. See [QA cases](docs/qa/acceptance-matrix.md), [quality requirements](docs/07-QUALITY.md), and [task board](docs/task-board.md). Docker and test runner commands will be added after their owners verify them.
+- Browse or search at `/products`; open a product, choose a quantity, and add it to the cart. The cart persists in this browser. Checkout accepts a guest name and email, recalculates prices on the server, decrements stock once, and shows a token-protected paid receipt. Save the receipt URL privately if you need to revisit it.
+- Sign in at `/admin/login` with the credentials configured in `.env`. Create, edit, or deactivate products at `/admin/products`. Import a CSV at `/admin/import`; the page shows inserted, skipped, and rejected counts plus row issues. Valid rows are accepted even when other rows are invalid. Reimporting an existing SKU does not overwrite it.
+- Product deletion is a soft delete, so prior order snapshots remain intact. Admin mutations require a session, CSRF token, and matching browser origin.
+
+## Tests and maintenance
+
+These checks target the running stack. The admin smoke creates and deactivates its own disposable product; checkout smokes create fake paid orders and reduce stock. Keep the private password in a file readable only by you; do not paste it into the command line.
+
+```sh
+python3 scripts/smoke/public_api.py
+python3 scripts/smoke/admin_api.py --username YOUR_ADMIN_USERNAME --password-file /path/to/private-password-file
+python3 scripts/smoke/checkout_api.py
+```
+
+Run backend tests without host PHP, and web checks without host Node.js:
+
+```sh
+docker build --target test -t ecommerce-api-test -f apps/api/Dockerfile .
+docker run --rm ecommerce-api-test vendor/bin/phpunit
+docker run --rm -v "$PWD/apps/web:/app" -w /app node:22-bookworm-slim sh -c 'npm ci && npm run typecheck && npm run lint && npm run build'
+```
+
+The web check writes `node_modules` and `.next` inside the mounted workspace. If you have Node.js 22 locally, `cd apps/web && npm ci && npm run typecheck && npm run lint && npm run build` is equivalent. Check production dependency advisories with `npm audit --omit=dev` in `apps/web` when npm registry access is available.
+
+Stop and restart without deleting data:
+
+```sh
+docker compose down
+docker compose up -d
+```
+
+For a deliberate reset, `docker compose down -v` deletes the named SQLite volume; back up anything needed first. Then `docker compose up --build -d` creates and seeds a new database. For errors use `docker compose logs api`, `docker compose logs web`, and `docker compose ps`. A changed `WEB_PORT` needs a matching `PUBLIC_ORIGIN`, and Docker must be running before Compose commands.
 
 ## Architecture and decisions
 
-The frozen contract uses Symfony/Doctrine with SQLite and Next.js/React/TypeScript/Tailwind/daisyUI. Product and order prices use integer cents; product write prices use decimal strings. SKUs are trimmed and uppercased; deletion is soft; checkout uses one atomic fake-payment request with an idempotency key and server-calculated prices. A receipt token acts as a bearer capability. [Architecture](docs/02-ARCHITECTURE.md) and [decisions](docs/decisions.md) explain the contract.
+```text
+Browser → Next.js web (:3000, loopback) → /api/v1 proxy → Symfony API (internal :8000)
+                                                    → Doctrine → SQLite named volume
+```
 
-The MVP chooses SQLite over PostgreSQL, SQL search over a dedicated service, one environment-configured admin over hosted auth, fake payment over a gateway, one layered backend over microservices, and synchronous CSV import over a job queue. These choices keep local setup small. SQLite write concurrency and synchronous import throughput limit scale; SQLite's built-in case folding does not cover accented product names. The result is not production-ready. There are no customer accounts, shipping, taxes, or real charges. Rotating the receipt secret invalidates prior receipt links.
+Prices and order totals use integer cents; product write prices are decimal strings. SKUs are trimmed, uppercased, and unique. Checkout verifies server prices and stock in a SQLite transaction, stores item snapshots, and uses a UUID idempotency key so an identical retry returns the same paid order. A receipt token is a bearer capability; rotating `RECEIPT_SECRET` invalidates old links. See the [architecture](docs/02-ARCHITECTURE.md), [API contract](docs/04-API.md), and [decisions](docs/decisions.md).
 
-## Project layout
+SQLite and synchronous import keep setup small but limit write concurrency and large-file throughput. Built-in SQLite case folding does not match every accented uppercase product name. This MVP has one environment-configured admin, no customer accounts, shipping, taxes, card payments, email, or public deployment configuration. Five remaining npm high advisories are in the ESLint development dependency chain; `npm audit --omit=dev` reports zero production vulnerabilities on the verified lockfile.
 
-- `apps/api/` — Symfony API and database code (in progress).
-- `apps/web/` — Next.js UI and proxy (in progress).
-- `infra/` and `compose.yaml` — container setup (in progress).
-- `data/products.csv` — supplied seed data.
-- `docs/` — contracts, task board, QA evidence.
-- `memory/` — implemented structure and decision records.
+## Project map and verification
+
+- `apps/api/`: Symfony controllers, services, entities, migration, tests, and seed command.
+- `apps/web/`: Next.js storefront, admin UI, cart, checkout, and API proxy.
+- `compose.yaml` and `infra/`: the two-container runtime and persistent database volume.
+- `docs/qa/`: [acceptance matrix](docs/qa/acceptance-matrix.md), [execution evidence](docs/qa/verification.md), and [defect log](docs/qa/defects.md).
+- `memory/`: implemented structure and decision records for maintainers.

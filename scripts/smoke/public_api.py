@@ -80,6 +80,19 @@ def check_categories(base_url):
         expect(isinstance(category, dict) and all(key in category for key in ("id", "name", "slug")), "invalid category shape")
 
 
+def check_empty_and_pagination(base_url):
+    status, body = get_json(base_url, "/api/v1/products?q=zzzzqanoresultzzzz")
+    expect(status == 200 and body.get("data") == [], "unknown search did not return empty data")
+    page = body.get("pagination")
+    expect(isinstance(page, dict) and page.get("total") == 0 and page.get("pages") == 0,
+           "unknown search pagination is incorrect")
+    status, body = get_json(base_url, "/api/v1/products?page=9999&per_page=1")
+    expect(status == 200 and body.get("data") == [], "out-of-range page did not return empty data")
+    page = body.get("pagination")
+    expect(isinstance(page, dict) and page.get("page") == 9999 and page.get("per_page") == 1,
+           "out-of-range page metadata is incorrect")
+
+
 def check_rejections(base_url):
     status, body = get_json(base_url, "/api/v1/products?sort=unknown_sort")
     check_error(status, body, 400, "BAD_QUERY")
@@ -95,6 +108,7 @@ def main():
         ("health", check_health),
         ("catalog", check_catalog),
         ("categories", check_categories),
+        ("empty search and pagination", check_empty_and_pagination),
         ("query and anonymous admin rejection", check_rejections),
     )
     passed = 0
