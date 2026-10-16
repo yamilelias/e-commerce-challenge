@@ -13,8 +13,8 @@ Updated 2026-10-15. Statuses: BACKLOG, READY, IN_PROGRESS, REVIEW, DONE, BLOCKED
 | BE-02b | 3 | Backend | P0 | BE-02a | C | IN_PROGRESS | — |
 | BE-02c | 3 | Backend | P0 | BE-02b | C | BACKLOG | — |
 | BE-02d | 3 | Backend | P0 | BE-02c | C | BACKLOG | — |
-| FE-02a | 3–4 | Frontend | P0 | FE-01, BE-02d contract | D | IN_PROGRESS | — |
-| FE-02b | 4 | Frontend | P0 | FE-01, BE-02a–c contract | D | BACKLOG | — |
+| FE-02a | 3–4 | Frontend | P0 | FE-01, BE-02d contract | D | REVIEW | `2cfc2d4` |
+| FE-02b | 4 | Frontend | P0 | FE-01, BE-02a–c contract | D | IN_PROGRESS | — |
 | INF-02 | 3–5 | DevOps | P0 | INF-01, BE-02a–d, FE-02a–b | B, E | BACKLOG | — |
 | QA-02a | 3 | QA/Docs | P0 | BE-01, FE-01, INF-01 | C, D | REVIEW | `448795f` |
 | QA-02b | 4–5 | QA/Docs | P0 | BE-02a–d, FE-02a–b, INF-01 | C–E | IN_PROGRESS | — |
@@ -86,3 +86,4 @@ Updated 2026-10-15. Statuses: BACKLOG, READY, IN_PROGRESS, REVIEW, DONE, BLOCKED
 - FE-01: npm install, typecheck, lint and build passed; proxy fixture confirmed query/cookie/CSRF/idempotency/multipart forwarding. Live API and browser visual checks remain **NOT VERIFIED**.
 - QA-01: AC-01–21 and C-01–16 mapped; Python smoke script syntax passed, but 0/4 HTTP checks ran because local HTTP access was denied and no stack was available.
 - QA-02a: static defects `QA-001` (missing Composer lock), `QA-002` (missing seed command), and `QA-003` (proxy `Location` response header) recorded in `docs/qa/defects.md`; no runtime checks passed.
+- FE-02a: typecheck/lint/build and targeted cart/retry/proxy assertions passed. Product detail, cart, checkout and receipt are committed; live seeded purchase remains **NOT VERIFIED**. The proxy `Location` forwarding fix awaits QA retest.
