@@ -22,5 +22,6 @@ This directory holds concise, durable facts needed to continue the e-commerce MV
 - [`decisions/atomic-checkout.md`](decisions/atomic-checkout.md): stock transaction, idempotency, and receipt capability.
 - [`decisions/remote-product-images.md`](decisions/remote-product-images.md): curated Commons URLs, attribution, migration, and idempotent image enrichment.
 - [`structure/image-catalog.md`](structure/image-catalog.md): checked-in SKU image metadata and its relationship to the seed fixture.
+- [`decisions/homepage-redesign.md`](decisions/homepage-redesign.md): frozen section, data, and motion choices for the homepage redesign.
 
 Add an entry here when creating a new memory record. Update memory in the same commit as the implementation or contract change it describes.

@@ -1,0 +1,10 @@
+# Homepage editorial redesign
+
+- Date: 2026-10-16
+- Status: Contract frozen; implementation in progress
+- Context: The existing homepage has a simple hero, four catalog cards, and category links. The user supplied `docs/redesign/` to guide an editorial redesign inspired by a Lovable listing while retaining the working commerce MVP.
+- Decision: Compose `/` from a CSS-led `HomeHero` and one client-owned `HomeSections` data loader, with `hero`, `collections`, `featured`, and `story` anchors. Keep `StoreHeader` and the footer shared across routes. Keep daisyUI colors, existing product DTOs, existing browser API client, and the CSS/reduced-motion based animation contract in `docs/redesign/DECISIONS.md`.
+- Reason: One data loader avoids duplicate homepage requests; scoped components and motion keep the API and other commerce journeys stable. CSS placeholder media provides a reliable hero without inventing product claims or adding a new asset dependency.
+- Alternatives considered: Server-fetching through an internal Docker URL would couple the page to environment and caching behavior; a separate motion package adds weight; copying the reference's assets or palette would conflict with the design contract.
+- Consequences: Homepage sections depend on the existing API in the browser and must handle empty/error states. The shared header needs regression checks on other routes. No API, schema, or new package is planned.
+- Affected files/contracts: `docs/redesign/DECISIONS.md`, `apps/web/src/app/page.tsx`, `apps/web/src/app/layout.tsx`, `apps/web/src/app/globals.css`, `apps/web/src/components/home/**`, `apps/web/src/components/layout/StoreHeader.tsx`, and frontend structure memory after implementation.

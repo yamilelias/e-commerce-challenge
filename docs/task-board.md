@@ -102,3 +102,16 @@ Updated 2026-10-16. Statuses: BACKLOG, READY, IN_PROGRESS, REVIEW, DONE, BLOCKED
 - **Gate F — PASS:** README setup, build and test commands ran from a fresh Git clone with a new named SQLite volume. The exact commands and results are in `docs/qa/verification.md`.
 
 The only documented functional limitation is SQLite Unicode case folding for accented search (QA-004, P1). `npm audit --omit=dev` found zero production vulnerabilities after FE-03; five high advisories remain in development-only ESLint dependencies. No P0 defect remains open.
+
+## Homepage redesign (2026-10-16)
+
+The incremental redesign contract is frozen in `docs/redesign/DECISIONS.md`. Existing commerce gates remain in force.
+
+| ID | Owner | Scope | Depends on | Status | Commit |
+|---|---|---|---|---|---|
+| RD-00 | Orchestrator | Baseline, component/data/motion contract | Redesign plan | DONE | contract commit |
+| RD-01 | Navigation agent | Shared header and accessible mobile menu | RD-00 | READY | — |
+| RD-02 | Hero agent | Editorial hero and responsive motion | RD-00 | READY | — |
+| RD-03 | Sections agent | Live collections, featured products, brand story | RD-00, RD-04 interface | READY | — |
+| RD-04 | Motion/QA agent | Reveal primitive, reduced-motion review, QA matrix | RD-00 | READY | — |
+| RD-05 | Orchestrator | Page composition, theme integration, runtime and browser sign-off | RD-01–04 | BACKLOG | — |
