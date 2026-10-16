@@ -23,5 +23,9 @@ This directory holds concise, durable facts needed to continue the e-commerce MV
 - [`decisions/remote-product-images.md`](decisions/remote-product-images.md): curated Commons URLs, attribution, migration, and idempotent image enrichment.
 - [`structure/image-catalog.md`](structure/image-catalog.md): checked-in SKU image metadata and its relationship to the seed fixture.
 - [`decisions/homepage-redesign.md`](decisions/homepage-redesign.md): frozen section, data, and motion choices for the homepage redesign.
+- [`structure/redesign-navigation.md`](structure/redesign-navigation.md): shared storefront header and mobile navigation behavior.
+- [`structure/redesign-hero.md`](structure/redesign-hero.md): editorial homepage hero and its responsive media composition.
+- [`structure/redesign-sections.md`](structure/redesign-sections.md): homepage category/product data loader and content sections.
+- [`structure/redesign-motion.md`](structure/redesign-motion.md): shared reveal observer and reduced-motion behavior.
 
 Add an entry here when creating a new memory record. Update memory in the same commit as the implementation or contract change it describes.

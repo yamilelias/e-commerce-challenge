@@ -19,3 +19,5 @@ When an instruction would otherwise need to be repeated to subagents, or a preve
 ## Commits and handoffs
 
 Commit every code change, including changes made by subagents. Commit related memory updates with the code they document. Use a descriptive commit subject that states the change, with a task ID when one has been assigned (for example, `BE-03: Add validated product CRUD endpoints`). Keep commits scoped; never include unrelated or pre-existing user files. Each subagent must report its commit hash, changed paths, and actual verification results in its handoff. Do not claim a change is complete until its required commit exists.
+
+When agents share one Git checkout, serialize staging and commits. Before `git commit`, inspect `git diff --cached --name-only` and use a path-limited commit so another agent's staged files cannot be included accidentally. This prevents the shared index from mixing unrelated work.

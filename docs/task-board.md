@@ -110,8 +110,8 @@ The incremental redesign contract is frozen in `docs/redesign/DECISIONS.md`. Exi
 | ID | Owner | Scope | Depends on | Status | Commit |
 |---|---|---|---|---|---|
 | RD-00 | Orchestrator | Baseline, component/data/motion contract | Redesign plan | DONE | contract commit |
-| RD-01 | Navigation agent | Shared header and accessible mobile menu | RD-00 | READY | — |
-| RD-02 | Hero agent | Editorial hero and responsive motion | RD-00 | READY | — |
-| RD-03 | Sections agent | Live collections, featured products, brand story | RD-00, RD-04 interface | READY | — |
-| RD-04 | Motion/QA agent | Reveal primitive, reduced-motion review, QA matrix | RD-00 | READY | — |
-| RD-05 | Orchestrator | Page composition, theme integration, runtime and browser sign-off | RD-01–04 | BACKLOG | — |
+| RD-01 | Navigation agent | Shared header and accessible mobile menu | RD-00 | REVIEW | `51f7150` (shared commit with RD-03) |
+| RD-02 | Hero agent | Editorial hero and responsive motion | RD-00 | REVIEW | `78c2b8f` |
+| RD-03 | Sections agent | Live collections, featured products, brand story | RD-00, RD-04 interface | REVIEW | `51f7150` |
+| RD-04 | Motion/QA agent | Reveal primitive, reduced-motion review, QA matrix | RD-00 | REVIEW | `99285ae` |
+| RD-05 | Orchestrator | Page composition, theme integration, runtime and browser sign-off | RD-01–04 | IN_PROGRESS | integration commit pending |
