@@ -15,7 +15,7 @@ Updated 2026-10-15. Statuses: BACKLOG, READY, IN_PROGRESS, REVIEW, DONE, BLOCKED
 | BE-02d | 3 | Backend | P0 | BE-02c | C | IN_PROGRESS | — |
 | FE-02a | 3–4 | Frontend | P0 | FE-01, BE-02d contract | D | REVIEW | `2cfc2d4` |
 | FE-02b | 4 | Frontend | P0 | FE-01, BE-02a–c contract | D | REVIEW | `f73ade2` |
-| INF-02 | 3–5 | DevOps | P0 | INF-01, BE-02a–d, FE-02a–b | B, E | IN_PROGRESS | — |
+| INF-02 | 3–5 | DevOps | P0 | INF-01, BE-02a–d, FE-02a–b | B, E | REVIEW | `e8933c6` |
 | QA-02a | 3 | QA/Docs | P0 | BE-01, FE-01, INF-01 | C, D | REVIEW | `448795f` |
 | QA-02b | 4–5 | QA/Docs | P0 | BE-02a–d, FE-02a–b, INF-01 | C–E | REVIEW | `9c7ca76` |
 | QA-03 | 6 | QA/Docs | P0 | QA-02, INF-02 | F | BACKLOG | — |
@@ -90,3 +90,4 @@ Updated 2026-10-15. Statuses: BACKLOG, READY, IN_PROGRESS, REVIEW, DONE, BLOCKED
 - BE-02b: Composer lockfile, admin session/CSRF and product write endpoints committed. Docker PHPUnit passed 9 tests/33 assertions; `docker compose --env-file .env.example build api` exited 0. API startup still waits on BE-02c seed command.
 - FE-02b: admin login, CRUD and CSV import UI committed; typecheck/lint/build and targeted auth/multipart/proxy checks passed. Live admin journeys remain **NOT VERIFIED** pending BE-02c and Compose boot.
 - BE-02c: shared importer, protected upload and seed command committed. Disposable SQLite migration + seed accepted 85, skipped 5 and rejected 7 rows; repeat inserted 0. PHP lint and PHPUnit 12 tests/46 assertions passed. Isolated Compose boot is in progress.
+- INF-02: isolated `ecommerce-inf02` Compose build/start exited 0 with both services healthy and proxied DB-aware health 200. Migration applied; 85 products persisted across `down`/`up -d`; repeat seed inserted 0. Runtime fixes committed `e8933c6`.
