@@ -30,7 +30,7 @@ Backend tests, authenticated CRUD/import, checkout replay/stock checks, browser 
 
 The frozen contract uses Symfony/Doctrine with SQLite and Next.js/React/TypeScript/Tailwind/daisyUI. Product and order prices use integer cents; product write prices use decimal strings. SKUs are trimmed and uppercased; deletion is soft; checkout uses one atomic fake-payment request with an idempotency key and server-calculated prices. A receipt token acts as a bearer capability. [Architecture](docs/02-ARCHITECTURE.md) and [decisions](docs/decisions.md) explain the contract.
 
-The MVP chooses SQLite over PostgreSQL, SQL search over a dedicated service, one environment-configured admin over hosted auth, fake payment over a gateway, one layered backend over microservices, and synchronous CSV import over a job queue. These choices keep local setup small. SQLite write concurrency and synchronous import throughput limit scale; the result is not production-ready. There are no customer accounts, shipping, taxes, or real charges. Rotating the receipt secret invalidates prior receipt links.
+The MVP chooses SQLite over PostgreSQL, SQL search over a dedicated service, one environment-configured admin over hosted auth, fake payment over a gateway, one layered backend over microservices, and synchronous CSV import over a job queue. These choices keep local setup small. SQLite write concurrency and synchronous import throughput limit scale; SQLite's built-in case folding does not cover accented product names. The result is not production-ready. There are no customer accounts, shipping, taxes, or real charges. Rotating the receipt secret invalidates prior receipt links.
 
 ## Project layout
 

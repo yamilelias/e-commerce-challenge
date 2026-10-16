@@ -34,3 +34,30 @@ Reviewed committed foundation at `940c5df` against `docs/04-API.md` and the AC m
 | `python3 scripts/smoke/public_api.py --help` | 0 | Smoke CLI displayed its arguments. |
 
 The Docker daemon remains unavailable, so `docker compose build/up`, proxied health, and feature flows are **NOT VERIFIED**. No AC/C row is promoted to PASS by this review.
+
+## QA-02b catalog and proxy static review
+
+Reviewed committed BE-02a `60db5f4` and FE-01 proxy against the frozen API. Source inspection found no concrete P0 catalog defect in this slice. The new public catalog controller routes `/categories`, `/products`, and `/products/{id}` to `ProductService`; product input uses integer cents, normalized SKU, fixed-decimal weight, and explicit query validation. None of these observations is an HTTP PASS.
+
+| Command / inspection | Exit | Actual observation |
+|---|---:|---|
+| `python3` SQLite query: `SELECT lower('Élan') LIKE '%élan%'` and ASCII control `SELECT lower('Steel Bottle') LIKE '%steel%'` | 0 | Returned `0` and `1` respectively. QA-004 is a documented P1 SQLite Unicode search limitation under `docs/03-BACKEND.md` Section 8; AC-09 remains scoped to ASCII mixed-case data. |
+| `git show 2cfc2d4 -- 'apps/web/src/app/api/v1/[...path]/route.ts'` | 0 | FE-02a committed a filtered `Location` copy. QA-003 is READY_FOR_RETEST; proxied 201 header still needs HTTP proof. |
+
+FE-02a `2cfc2d4` also stores the original checkout body and UUID in session storage. `prepareAttempt()` rejects a changed body while an earlier attempt exists; ambiguous outcomes expose a retry using that exact body/key, and a new key requires an explicit reset with a duplicate-purchase warning. This is a static review of the committed retry path, not proof that C-11 or AC-16 passes through the API.
+
+Orchestrator reported Docker daemon access is available through escalation after this review. Runtime PASS remains pending a committed Composer lockfile, seed command, and booted Compose stack.
+
+## BE-02b image-build retest
+
+BE-02b `f58e45c` committed `apps/api/composer.lock`, admin session and product mutation endpoints. The Orchestrator reported running `docker compose --env-file .env.example build api` from the repository root with escalated Docker daemon access: **exit 0**, final output `e-commerce-challenge-api Built`. This is orchestrator-observed evidence resolving QA-001 for the image-build step. QA did not independently rerun the build. No container startup, seed, proxied health, authenticated API flow, or AC-01/21 PASS follows from the image build.
+
+Static review of committed BE-02b checked `AdminSession::requireAdmin()` before protected reads/writes, CSRF and Origin checks before mutations, JSON input parsing, and the create response `Location` header. No concrete P0 defect was found in this narrow source review; C-04–C-07 remain **NOT VERIFIED** pending HTTP tests.
+
+| QA-02b local command | Exit | Actual result |
+|---|---:|---|
+| `test -f apps/api/composer.lock` | 0 | Lockfile now present at BE-02b. |
+| `rg -n 'AsCommand\|app:products:seed' apps/api/src` | 1 | Seed command still absent from BE-02b; QA-002 remains OPEN pending BE-02c. |
+| `PYTHONPYCACHEPREFIX=/tmp/qa02b-pycache python3 -m py_compile scripts/smoke/public_api.py` | 0 | Smoke script syntax check passed. |
+| `python3 scripts/smoke/public_api.py --help` | 0 | CLI help displayed. |
+| `docker compose --env-file .env.example config --quiet` | 0 | Compose config parsed. This does not verify required private values or startup. |
