@@ -1,0 +1,8 @@
+framework:
+    secret: '%env(APP_SECRET)%'
+    session:
+        handler_id: null
+        save_path: /data/sessions
+        cookie_httponly: true
+        cookie_samesite: lax
+        cookie_secure: '%env(bool:SESSION_COOKIE_SECURE)%'

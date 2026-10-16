@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd" bootstrap="tests/bootstrap.php" colors="true">
+    <php>
+        <env name="APP_ENV" value="test" force="true"/>
+        <env name="APP_DEBUG" value="0" force="true"/>
+        <env name="APP_SECRET" value="test-only-app-secret" force="true"/>
+        <env name="SESSION_COOKIE_SECURE" value="0" force="true"/>
+    </php>
+    <testsuites>
+        <testsuite name="API">
+            <directory>tests</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>

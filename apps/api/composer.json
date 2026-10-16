@@ -1,0 +1,37 @@
+{
+  "name": "challenge/ecommerce-api",
+  "description": "Symfony API for the e-commerce challenge",
+  "type": "project",
+  "license": "proprietary",
+  "require": {
+    "php": ">=8.3",
+    "ext-pdo_sqlite": "*",
+    "doctrine/dbal": "^3.9",
+    "doctrine/doctrine-bundle": "^2.13",
+    "doctrine/doctrine-migrations-bundle": "^3.4",
+    "doctrine/orm": "^3.3",
+    "symfony/console": "7.4.*",
+    "symfony/dotenv": "7.4.*",
+    "symfony/framework-bundle": "7.4.*",
+    "symfony/runtime": "7.4.*",
+    "symfony/yaml": "7.4.*"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^11.5",
+    "symfony/browser-kit": "7.4.*",
+    "symfony/phpunit-bridge": "7.4.*"
+  },
+  "autoload": {
+    "psr-4": {"App\\": "src/"}
+  },
+  "autoload-dev": {
+    "psr-4": {"App\\Tests\\": "tests/"}
+  },
+  "scripts": {
+    "test": "vendor/bin/phpunit"
+  },
+  "config": {
+    "allow-plugins": {"symfony/runtime": true},
+    "sort-packages": true
+  }
+}
