@@ -216,7 +216,7 @@ Choose **Symfony-native server-side session** with environment-configured **admi
 
 **Commands (final exact commands owned by DevOps/README):** `docker compose up --build -d`; `docker compose exec api php bin/console doctrine:migrations:migrate --no-interaction`; `docker compose exec api php bin/console app:products:seed`; `docker compose ps`; `docker compose logs`; tests inside containers. Confirm data survives `docker compose down` and restart; `down -v` intentionally wipes database and must be labelled destructive. Seed should not run on every web request; a manual documented seed command or one-time startup step is sufficient.
 
-**Image sizes/build performance:** multi-stage Dockerfiles where reasonable; use lockfiles; ignore `node_modules`, `.next`, `vendor`, SQLite files, env secrets. No external service dependency after images/dependencies are built.
+**Image sizes/build performance:** multi-stage Dockerfiles where reasonable; use lockfiles; ignore `node_modules`, `.next`, `vendor`, SQLite files, env secrets. Core catalog, admin, and checkout need no external service after build. Curated product photos load directly from Wikimedia Commons in the browser and require network access; failed photo loads use local placeholders.
 
 ## 12. Decisions and alternatives (ADRs)
 
