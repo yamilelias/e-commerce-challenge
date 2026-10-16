@@ -31,7 +31,7 @@ final class ApiExceptionSubscriber implements EventSubscriberInterface
                     'message' => $exception->getMessage(),
                     'fields' => $exception->fields === [] ? new \stdClass() : $exception->fields,
                 ],
-            ], $exception->status, ['Content-Type' => 'application/json; charset=utf-8']));
+            ], $exception->status, ['Content-Type' => 'application/json; charset=utf-8', 'Cache-Control' => 'no-store']));
 
             return;
         }
@@ -49,6 +49,6 @@ final class ApiExceptionSubscriber implements EventSubscriberInterface
 
         $event->setResponse(new JsonResponse([
             'error' => ['code' => $code, 'message' => $message, 'fields' => new \stdClass()],
-        ], $status, ['Content-Type' => 'application/json; charset=utf-8']));
+        ], $status, ['Content-Type' => 'application/json; charset=utf-8', 'Cache-Control' => 'no-store']));
     }
 }

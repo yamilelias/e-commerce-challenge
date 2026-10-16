@@ -53,8 +53,8 @@ final class ProductInput
                         break;
                     }
                     $sku = strtoupper(trim($value));
-                    if (strlen($sku) > 100 || !preg_match('/^[A-Z0-9][A-Z0-9._-]*$/D', $sku)) {
-                        $errors[$field] = ['Use 1–100 ASCII letters, digits, dots, underscores or hyphens.'];
+                    if ($sku === '' || strlen($sku) > 100 || !preg_match('/^[\x20-\x7E]+$/D', $sku)) {
+                        $errors[$field] = ['Use 1–100 printable ASCII characters.'];
                         break;
                     }
                     $result[$field] = $sku;
