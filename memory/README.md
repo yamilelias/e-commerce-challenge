@@ -11,5 +11,7 @@ This directory holds concise, durable facts needed to continue the e-commerce MV
 - [`structure/infrastructure.md`](structure/infrastructure.md): implemented Compose and Docker file map.
 - [`structure/backend.md`](structure/backend.md): Symfony routes, entities, schema, and verification state.
 - [`decisions/backend-foundation.md`](decisions/backend-foundation.md): backend scaffold and SQLite connection choices.
+- [`structure/frontend.md`](structure/frontend.md): Next.js routes, proxy, UI components, and verification state.
+- [`decisions/frontend-foundation.md`](decisions/frontend-foundation.md): catalog and same-origin proxy choices.
 
 Add an entry here when creating a new memory record. Update memory in the same commit as the implementation or contract change it describes.
