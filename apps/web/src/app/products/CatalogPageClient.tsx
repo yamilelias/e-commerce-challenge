@@ -5,6 +5,8 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { CatalogResults } from "@/components/catalog/CatalogResults";
 import { getCategories } from "@/lib/api/client";
 import type { Category, ProductSort } from "@/lib/api/types";
+import { ContactSection } from "@/components/catalog/ContactSection";
+import styles from "@/components/catalog/ProductPages.module.css";
 
 const sorts: { value: ProductSort; label: string }[] = [
   { value: "name_asc", label: "Name: A to Z" },
@@ -48,15 +50,29 @@ export function CatalogPageClient() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [draft, q, searchDraft.urlQ]);
 
-  return <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-14">
-    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Browse</p>
-    <h1 className="editorial mt-2 text-4xl font-semibold sm:text-5xl">Shop all products</h1>
-    <p className="mt-3 max-w-2xl text-base-content/70">Search by name or SKU, then explore the categories currently in the catalog.</p>
-    <div className="my-8 grid gap-4 rounded-box border border-base-300 bg-base-100 p-5 sm:grid-cols-3">
-      <label className="form-control flex flex-col gap-1"><span className="label-text font-semibold">Search products</span><input className="input input-bordered w-full" type="search" maxLength={100} value={draft} onChange={(event) => setSearchDraft({ urlQ: q, value: event.target.value })} placeholder="Name or SKU" /></label>
-      <label className="form-control flex flex-col gap-1"><span className="label-text font-semibold">Category</span><select className="select select-bordered w-full" value={category} onChange={(event) => updateParam("category", event.target.value)}><option value="">All categories</option>{categories.map((item) => <option value={item.slug} key={item.id}>{item.name}</option>)}</select></label>
-      <label className="form-control flex flex-col gap-1"><span className="label-text font-semibold">Sort by</span><select className="select select-bordered w-full" value={sort} onChange={(event) => updateParam("sort", event.target.value)}>{sorts.map((item) => <option value={item.value} key={item.value}>{item.label}</option>)}</select></label>
-    </div>
-    <CatalogResults query={{ q, category, sort, page, per_page: 12 }} />
-  </div>;
+  return <>
+    <section className={styles.hero} aria-labelledby="catalog-title">
+      <div className={styles.heroInner}>
+        <p className={styles.eyebrow}>The collection</p>
+        <h1 className={styles.heroTitle} id="catalog-title">All products.</h1>
+        <p className={styles.heroText}>Objects for everyday living. Considered finds for your home, your rituals, and all the moments in between.</p>
+        <p className={styles.imageCredit}>Photo by Shixart1985 · <a href="https://commons.wikimedia.org/wiki/File:Modern_luxury_living_room_with_kitchen_interior.jpg" target="_blank" rel="noopener noreferrer">Source</a> · <a href="https://creativecommons.org/licenses/by/2.0/" target="_blank" rel="noopener noreferrer">CC BY 2.0</a></p>
+      </div>
+    </section>
+    <section className={styles.catalog} aria-labelledby="browse-title">
+      <div className={styles.content}>
+        <div className={styles.sectionLead}><div><p className={styles.eyebrow}>Explore the catalog</p><h2 className={styles.sectionTitle} id="browse-title">Find your next favorite.</h2></div><p className={styles.sectionCopy}>Browse what is currently available, or search for something specific.</p></div>
+        <nav className={styles.categoryScroll} aria-label="Product categories">
+          <button type="button" className={`${styles.categoryButton} ${!category ? styles.categoryButtonActive : ""}`} aria-current={!category ? "page" : undefined} onClick={() => updateParam("category", "")}>All products</button>
+          {categories.map((item) => <button type="button" className={`${styles.categoryButton} ${category === item.slug ? styles.categoryButtonActive : ""}`} aria-current={category === item.slug ? "page" : undefined} onClick={() => updateParam("category", item.slug)} key={item.id}>{item.name}</button>)}
+        </nav>
+        <div className={styles.controls}>
+          <label className={styles.controlLabel}>Search products<input className={styles.controlInput} type="search" maxLength={100} value={draft} onChange={(event) => setSearchDraft({ urlQ: q, value: event.target.value })} placeholder="Search by name or SKU" /></label>
+          <label className={styles.controlLabel}>Sort by<select className={styles.controlInput} value={sort} onChange={(event) => updateParam("sort", event.target.value)}>{sorts.map((item) => <option value={item.value} key={item.value}>{item.label}</option>)}</select></label>
+        </div>
+        <CatalogResults query={{ q, category, sort, page, per_page: 12 }} />
+      </div>
+    </section>
+    <ContactSection />
+  </>;
 }

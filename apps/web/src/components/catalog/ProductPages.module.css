@@ -1,0 +1,100 @@
+.hero {
+  position: relative;
+  display: flex;
+  min-height: clamp(25rem, 45vw, 39rem);
+  align-items: end;
+  isolation: isolate;
+  overflow: hidden;
+  background: #174d3d;
+  color: #fff;
+}
+
+.hero::before, .contact::before {
+  position: absolute;
+  z-index: -2;
+  inset: 0;
+  background-position: center;
+  background-size: cover;
+  content: "";
+}
+
+.hero::before { background-image: url("https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a0/Modern_luxury_living_room_with_kitchen_interior.jpg/1280px-Modern_luxury_living_room_with_kitchen_interior.jpg"); }
+.hero::after, .contact::after {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  content: "";
+}
+.hero::after { background: linear-gradient(90deg, #102e26dc, #102e2666 65%, #102e2633); }
+
+.heroInner, .content, .contactInner {
+  width: min(calc(100% - 2rem), 80rem);
+  margin-inline: auto;
+}
+
+.heroInner { padding-block: 5rem 3.5rem; }
+.eyebrow { color: #d6c45a; font-size: .72rem; font-weight: 700; letter-spacing: .22em; text-transform: uppercase; }
+.heroTitle { max-width: 11ch; margin-top: .9rem; font-family: Georgia, "Times New Roman", serif; font-size: clamp(3.25rem, 7.5vw, 7rem); font-weight: 400; letter-spacing: -.06em; line-height: .98; }
+.heroText { max-width: 34rem; margin-top: 1.4rem; font-size: clamp(1rem, 1.5vw, 1.18rem); line-height: 1.7; }
+.imageCredit { margin-top: 2rem; color: #e7eee7; font-size: .68rem; line-height: 1.5; }
+.imageCredit a { text-decoration: underline; text-underline-offset: .15em; }
+
+.catalog { padding-block: clamp(3rem, 6vw, 6rem); background: #f5f3e9; }
+.sectionLead { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 1rem; margin-bottom: 2rem; }
+.sectionTitle { font-family: Georgia, "Times New Roman", serif; font-size: clamp(2.4rem, 5vw, 4rem); font-weight: 400; letter-spacing: -.045em; }
+.sectionCopy { max-width: 26rem; color: #506158; line-height: 1.6; }
+.categoryScroll { display: flex; overflow-x: auto; gap: .5rem; padding: 0 0 .9rem; scrollbar-width: thin; }
+.categoryButton { flex: none; padding: .7rem 1.2rem; border: 1px solid #a5b5a5; border-radius: 999px; background: transparent; color: #174d3d; font-size: .84rem; font-weight: 600; white-space: nowrap; cursor: pointer; transition: background .2s ease, color .2s ease; }
+.categoryButton:hover, .categoryButtonActive { border-color: #174d3d; background: #174d3d; color: #fff; }
+.controls { display: grid; grid-template-columns: minmax(0, 1fr) minmax(11rem, 15rem); gap: 1rem; align-items: end; margin: 1.5rem 0 2.5rem; padding-block: 1.4rem; border-block: 1px solid #cdd8ca; }
+.controlLabel { display: grid; gap: .45rem; color: #405048; font-size: .76rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+.controlInput { width: 100%; min-height: 3.1rem; padding: .7rem 1rem; border: 1px solid #b9c9b8; border-radius: .35rem; outline-color: #174d3d; background: #fff; color: #202822; font-size: .95rem; font-weight: 400; letter-spacing: 0; text-transform: none; }
+.productGrid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 3rem 1.25rem; }
+.productReveal { min-width: 0; }
+
+.contact { position: relative; isolation: isolate; overflow: hidden; min-height: 28rem; display: grid; align-items: center; background: #174d3d; color: #fff; }
+.contact::before { background-image: url("https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d9/Modern_house_exterior_with_red_roof_and_landscaped_garden_under_clear_blue_sky.jpg/1280px-Modern_house_exterior_with_red_roof_and_landscaped_garden_under_clear_blue_sky.jpg"); }
+.contact::after { background: linear-gradient(90deg, #102e26ed, #102e26b3 60%, #102e2670); }
+.contactInner { padding-block: 4rem; }
+.contactTitle { max-width: 14ch; margin-top: .8rem; font-family: Georgia, "Times New Roman", serif; font-size: clamp(2.6rem, 5.5vw, 5rem); font-weight: 400; letter-spacing: -.05em; line-height: 1.05; }
+.contactText { max-width: 31rem; margin-top: 1.3rem; color: #ecf1eb; line-height: 1.7; }
+.contactButton { display: inline-flex; min-height: 3.2rem; align-items: center; gap: 1.5rem; margin-top: 2rem; padding: .75rem 1.25rem; border-radius: 999px; background: #d6c45a; color: #202822; font-weight: 700; text-decoration: none; transition: transform .2s ease, background .2s ease; }
+.contactButton:hover { transform: translateY(-2px); background: #e7d671; }
+
+.detail { padding-block: 2.5rem 5rem; background: #f5f3e9; }
+.breadcrumbs { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; color: #53675a; font-size: .85rem; }
+.breadcrumbs a:hover { text-decoration: underline; }
+.detailGrid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: clamp(2rem, 6vw, 6rem); margin-top: 2.5rem; }
+.galleryMain { position: relative; overflow: hidden; aspect-ratio: 1 / 1; background: #dce5d6; }
+.galleryMain img { width: 100%; height: 100%; object-fit: cover; }
+.galleryPlaceholder { display: grid; width: 100%; height: 100%; place-items: center; color: #497257; font-family: Georgia, "Times New Roman", serif; font-size: 9rem; }
+.thumbnails { display: flex; gap: .7rem; overflow-x: auto; margin-top: .85rem; padding: .2rem .15rem .6rem; }
+.thumbnail { flex: 0 0 5.6rem; overflow: hidden; aspect-ratio: 1; border: 2px solid transparent; border-radius: .25rem; background: #dce5d6; cursor: pointer; }
+.thumbnail[aria-pressed="true"] { border-color: #174d3d; }
+.thumbnail img { width: 100%; height: 100%; object-fit: cover; }
+.photoCredit { margin-top: .5rem; color: #63736a; font-size: .7rem; line-height: 1.5; }
+.photoCredit a { text-decoration: underline; }
+.detailCategory { color: #174d3d; font-size: .72rem; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; }
+.detailTitle { margin-top: 1rem; font-family: Georgia, "Times New Roman", serif; font-size: clamp(2.6rem, 5vw, 5rem); font-weight: 400; letter-spacing: -.05em; line-height: 1.05; }
+.sku { margin-top: .85rem; color: #63736a; font-size: .8rem; }
+.detailPrice { margin-top: 2rem; color: #174d3d; font-family: Georgia, "Times New Roman", serif; font-size: 2.25rem; }
+.description { margin-top: 1.5rem; color: #405048; line-height: 1.8; }
+.facts { display: grid; gap: .85rem; margin-top: 2rem; padding-block: 1.3rem; border-block: 1px solid #cdd8ca; font-size: .9rem; }
+.fact { display: flex; justify-content: space-between; gap: 2rem; }
+.fact dt { color: #64746a; }
+.quantityRow { display: flex; flex-wrap: wrap; align-items: end; gap: 1rem; margin-top: 2rem; }
+.quantityControl { display: flex; min-height: 3.25rem; align-items: center; border: 1px solid #9aaf9b; background: #fff; }
+.quantityControl button { width: 2.7rem; min-height: 3.15rem; font-size: 1.2rem; cursor: pointer; }
+.quantityControl button:disabled { opacity: .4; cursor: not-allowed; }
+.quantityControl output { min-width: 2rem; text-align: center; }
+.addButton { min-height: 3.25rem; padding: .7rem 2rem; border-radius: .2rem; background: #174d3d; color: white; font-weight: 700; cursor: pointer; }
+.addButton:disabled { opacity: .5; cursor: not-allowed; }
+.added { margin-top: 1rem; color: #174d3d; font-size: .9rem; }
+.related { padding-block: 4rem 6rem; background: #fff; }
+.relatedHead { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 1rem; margin-bottom: 2rem; }
+.relatedLink { color: #174d3d; font-weight: 700; text-decoration: underline; text-underline-offset: .3rem; }
+
+@media (max-width: 64rem) { .productGrid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 48rem) { .productGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .detailGrid { grid-template-columns: 1fr; } }
+@media (max-width: 36rem) { .heroInner { padding-block: 4rem 2rem; } .controls { grid-template-columns: 1fr; } .productGrid { gap: 2rem .8rem; } .thumbnail { flex-basis: 4.5rem; } .quantityRow { align-items: stretch; } .addButton { flex: 1; } }
+@media (prefers-reduced-motion: reduce) { .categoryButton, .contactButton { transition: none; } .contactButton:hover { transform: none; } }

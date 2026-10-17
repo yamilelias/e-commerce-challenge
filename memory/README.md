@@ -27,5 +27,7 @@ This directory holds concise, durable facts needed to continue the e-commerce MV
 - [`structure/redesign-hero.md`](structure/redesign-hero.md): editorial homepage hero and its responsive media composition.
 - [`structure/redesign-sections.md`](structure/redesign-sections.md): homepage category/product data loader and content sections.
 - [`structure/redesign-motion.md`](structure/redesign-motion.md): shared reveal observer and reduced-motion behavior.
+- [`decisions/products-redesign.md`](decisions/products-redesign.md): editorial products pages, gallery compatibility, and remote image choices.
+- [`structure/redesign-products.md`](structure/redesign-products.md): products routes, components, galleries, and contact section.
 
 Add an entry here when creating a new memory record. Update memory in the same commit as the implementation or contract change it describes.

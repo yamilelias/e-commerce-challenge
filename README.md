@@ -27,7 +27,7 @@ Install Docker Desktop (or Docker Engine with Compose v2) and Python 3. No host 
 
 Open <http://localhost:3000>. The `api` container runs migrations, the create-only CSV seed, and product image enrichment before it becomes healthy; the `web` container starts afterward. Only the web port is published, on loopback. Browser API calls go through the same-origin `/api/v1` proxy.
 
-The homepage uses an editorial hero, live category collections, eight featured catalog products, and a short brand section. Its cards come from the existing API, with loading and empty states; the catalog, cart, checkout, and admin routes continue to work as before. The homepage supports keyboard navigation and reduced-motion CSS. See the [redesign plan](docs/redesign/00-REDESIGN-ORCHESTRATOR.md) and [verification record](docs/qa/home-redesign.md).
+The homepage uses an editorial hero, live category collections, eight featured catalog products, and a short brand section. Its cards come from the existing API, with loading and empty states. The products catalog adds a photo hero, searchable and filterable editorial cards, and a contact banner. Product details show an image gallery, quantity control, and related items from the same category. Motion respects reduced-motion preferences. See the [homepage redesign plan](docs/redesign/00-REDESIGN-ORCHESTRATOR.md) and the [products verification record](docs/qa/products-redesign.md).
 
 The original CSV has 97 data rows. A fresh seed inserts 85 products, skips 5 duplicate or blank rows, and rejects 7 invalid rows with reasons. A restart or repeat seed inserts none and preserves edits and purchased stock. Review the actual report with:
 
@@ -39,9 +39,9 @@ docker compose exec api php bin/console app:products:images --file=/app/data/pro
 
 ## Product photos
 
-`data/product-images.json` maps seeded SKUs to Wikimedia Commons image URLs, source pages, creator credits, and license links. The API stores these **URLs and attribution fields**, not image bytes. Startup enriches matching products after the CSV seed. Repeating the command above leaves products with an existing image URL unchanged; new admin products without a catalog entry use the visual fallback. The original CSV and admin product form do not accept image fields.
+`data/product-images.json` maps each of the 85 seeded SKUs to a primary photo and at least two alternate Wikimedia Commons photos, each with a direct URL, source page, creator credit, and license link. The API stores these **URLs and attribution fields**, not image bytes. Startup enriches matching products after the CSV seed. Repeating the command above preserves existing primary photos and imported alternate slots; new admin products without a catalog entry use the visual fallback. The original CSV and admin product form do not accept image fields. Run `python3 scripts/smoke/product_image_catalog.py` to check catalog coverage and metadata.
 
-The storefront requests thumbnails directly from Wikimedia Commons. Product detail links to the source and license and shows the creator credit. A browser needs network access to Commons to show the photos; missing or unreachable images display a fallback. Commons can remove or change an image, so review its source and license when updating the catalog. Remote requests also expose the visitor's IP address to Wikimedia Commons.
+The storefront requests thumbnails directly from Wikimedia Commons. Product detail links to each selected image's source and license and shows its creator credit. Catalog cards show an alternate photo on hover when available. A browser needs network access to Commons to show the photos; missing or unreachable images display a fallback. Commons can remove or change an image, so review its source and license when updating the catalog. Remote requests also expose the visitor's IP address to Wikimedia Commons.
 
 ## Use the application
 

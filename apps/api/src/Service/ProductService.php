@@ -7,6 +7,7 @@ namespace App\Service;
 use App\Http\ApiProblem;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\ParameterType;
 
 final class ProductService
@@ -86,8 +87,9 @@ final class ProductService
             ['limit' => ParameterType::INTEGER, 'offset' => ParameterType::INTEGER],
         )->fetchAllAssociative();
 
+        $images = $this->alternateImages($rows);
         return [
-            'data' => array_map($this->productDto(...), $rows),
+            'data' => array_map(fn (array $row): array => $this->productDto($row, $images[(int) $row['id']] ?? []), $rows),
             'pagination' => ['page' => $page, 'per_page' => $perPage, 'total' => $total, 'pages' => (int) ceil($total / $perPage)],
         ];
     }
@@ -106,7 +108,8 @@ final class ProductService
             throw new ApiProblem(404, 'NOT_FOUND', 'Product not found.');
         }
 
-        return $this->productDto($row);
+        $images = $this->alternateImages([$row]);
+        return $this->productDto($row, $images[$id] ?? []);
     }
 
     public function parseId(string $id): int
@@ -209,10 +212,25 @@ final class ProductService
     }
 
     /** @param array<string, mixed> $row */
-    private function productDto(array $row): array
+    private function productDto(array $row, array $alternates): array
     {
         [$whole, $fraction] = array_pad(explode('.', (string) $row['weight_kg'], 2), 2, '');
         $utc = new \DateTimeZone('UTC');
+        $images = [];
+        if ($row['image_url'] !== null) {
+            $images[] = [
+                'url' => $row['image_url'], 'source_url' => $row['image_source_url'],
+                'attribution' => $row['image_attribution'], 'license' => $row['image_license'],
+                'license_url' => $row['image_license_url'],
+            ];
+        }
+        foreach ($alternates as $image) {
+            $images[] = [
+                'url' => $image['image_url'], 'source_url' => $image['image_source_url'],
+                'attribution' => $image['image_attribution'], 'license' => $image['image_license'],
+                'license_url' => $image['image_license_url'],
+            ];
+        }
 
         return [
             'id' => (int) $row['id'], 'name' => $row['name'], 'sku' => $row['sku'],
@@ -223,9 +241,31 @@ final class ProductService
             'image_url' => $row['image_url'], 'image_source_url' => $row['image_source_url'],
             'image_attribution' => $row['image_attribution'], 'image_license' => $row['image_license'],
             'image_license_url' => $row['image_license_url'],
+            'images' => $images,
             'created_at' => (new \DateTimeImmutable($row['created_at'], $utc))->format('Y-m-d\TH:i:s\Z'),
             'updated_at' => (new \DateTimeImmutable($row['updated_at'], $utc))->format('Y-m-d\TH:i:s\Z'),
         ];
+    }
+
+    /** @param list<array<string, mixed>> $products
+     *  @return array<int, list<array<string, mixed>>>
+     */
+    private function alternateImages(array $products): array
+    {
+        if ($products === []) {
+            return [];
+        }
+        $ids = array_map(static fn (array $row): int => (int) $row['id'], $products);
+        $rows = $this->db->executeQuery(
+            'SELECT product_id, image_url, image_source_url, image_attribution, image_license, image_license_url FROM product_images WHERE product_id IN (:ids) ORDER BY product_id, position',
+            ['ids' => $ids],
+            ['ids' => ArrayParameterType::INTEGER],
+        )->fetchAllAssociative();
+        $byProduct = [];
+        foreach ($rows as $row) {
+            $byProduct[(int) $row['product_id']][] = $row;
+        }
+        return $byProduct;
     }
 
     private function positiveQueryInt(mixed $value, string $field): int

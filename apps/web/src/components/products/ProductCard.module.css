@@ -1,0 +1,66 @@
+.editorialCard {
+  min-width: 0;
+  background: transparent;
+}
+
+.imageLink {
+  display: block;
+  overflow: hidden;
+  border-radius: .35rem;
+  background: #dce5d6;
+}
+
+.image {
+  aspect-ratio: 4 / 5;
+  transition: transform var(--home-motion-reveal, 560ms) var(--home-motion-ease, ease);
+}
+
+.editorialCard:hover .image,
+.editorialCard:focus-within .image {
+  transform: scale(1.025);
+}
+
+.alternate {
+  opacity: 0;
+  transition: opacity var(--home-motion-standard, 320ms) ease;
+}
+
+.editorialCard:hover .alternate,
+.editorialCard:focus-within .alternate {
+  opacity: 1;
+}
+
+.editorialBody {
+  padding: 1rem .15rem .25rem;
+}
+
+.category {
+  color: #587061;
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+
+.title {
+  margin-top: .45rem;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.25rem, 1.6vw, 1.5rem);
+  line-height: 1.25;
+}
+
+.title a:hover { text-decoration: underline; text-underline-offset: .2em; }
+
+.price {
+  margin-top: .6rem;
+  color: #174d3d;
+  font-size: .95rem;
+  font-weight: 700;
+}
+
+.stock { margin-top: .4rem; color: #6e544b; font-size: .78rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  .image, .alternate { transition: none; }
+  .editorialCard:hover .image, .editorialCard:focus-within .image { transform: none; }
+}

@@ -5,5 +5,5 @@ export const metadata: Metadata = { title: "Product details" };
 
 export default async function ProductPage({ params }: { params: Promise<{ id: string }> }) {
   const id = (await params).id;
-  return <ProductDetail id={id} />;
+  return <ProductDetail key={id} id={id} />;
 }

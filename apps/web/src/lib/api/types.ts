@@ -1,5 +1,13 @@
 export type Category = { id: number; name: string; slug: string };
 
+export type ProductPhoto = {
+  url: string;
+  source_url: string | null;
+  attribution: string | null;
+  license: string | null;
+  license_url: string | null;
+};
+
 export type Product = {
   id: number;
   name: string;
@@ -15,6 +23,7 @@ export type Product = {
   image_attribution: string | null;
   image_license: string | null;
   image_license_url: string | null;
+  images: ProductPhoto[];
   is_active: boolean;
   created_at: string;
   updated_at: string;

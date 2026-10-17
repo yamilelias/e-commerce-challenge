@@ -1,7 +1,7 @@
 # Curated product image catalog
 
-- `data/product-images.json` contains one record for each of the 85 products accepted by the supplied `data/products.csv` seed. Its top-level keys are normalized uppercase SKUs. Each record contains exactly `image_url`, `image_source_url`, `image_attribution`, `image_license`, and `image_license_url`.
-- `image_url` points to a direct HTTPS Wikimedia thumbnail. `image_source_url` points to its Commons file page. The creator credit is plain text; the license and HTTPS license URL are recorded from Commons file metadata. No image files are checked in.
+- `data/product-images.json` contains one record for each of the 85 products accepted by the supplied `data/products.csv` seed. Its top-level keys are normalized uppercase SKUs. Each record has the existing five primary image fields and an `alternate_images` array with two entries using the same fields. The 170 alternates have distinct URLs within each product.
+- Each `image_url` points to a direct HTTPS Wikimedia thumbnail. Each `image_source_url` points to its Commons file page. The creator credit is plain text; the license and HTTPS license URL are recorded from Commons file metadata. No image files are checked in. `scripts/smoke/product_image_catalog.py` validates coverage, field shape, direct URL hosts, metadata, and within-product URL uniqueness before import.
 - The catalog is static and curated. The implemented enrichment command and API/UI wiring are mapped in [`backend.md`](backend.md) and [`frontend.md`](frontend.md). New products without a catalog entry have no curated image.
 - Exact product variants were not available for every SKU. The test-fixture names on `XS-001`, `SQL-001`, `CI-001`, and `QI-001` use representative images based on their category or description. Those images are illustrative and should not imply a brand or exact item.
 

@@ -42,9 +42,17 @@ type Product = {
   image_attribution: string | null; // plain-text creator credit
   image_license: string | null; // e.g. 'CC BY-SA 4.0' or 'CC0'
   image_license_url: string | null;
+  images: ProductImage[];       // primary first, then curated alternates by position
   is_active: boolean;
   created_at: string;           // ISO UTC
   updated_at: string;
+};
+type ProductImage = {
+  url: string;
+  source_url: string | null;
+  attribution: string | null;
+  license: string | null;
+  license_url: string | null;
 };
 type Category = { id: number; name: string; slug: string };
 
@@ -64,6 +72,8 @@ type ProductWrite = {
 **Public visibility:** `GET /products` and `GET /products/{id}` return only active items; admin list returns both active and inactive. Category filtering for public catalog includes categories even if currently empty only when persisted; `GET /categories` returns categories with **at least one active product** in alphabetic name order.
 
 **Image enrichment amendment (2026-10-16):** Product image fields are nullable response fields. Existing product writes and CSV header remain unchanged. A separate idempotent server-side catalog command reads `data/product-images.json`, matches normalized SKU, and fills image fields for seeded products after migration/CSV seed. Image URLs are direct HTTPS Wikimedia Commons thumbnail URLs; source, creator, and license metadata must travel with them so the UI can show attribution. The command must not overwrite a non-null image URL on restart. No image bytes are stored locally or in SQLite. Products without a curated match retain the existing visual fallback.
+
+**Gallery amendment (2026-10-16):** Every Product response includes `images`. It is empty when no image exists, otherwise it contains the legacy primary image first (when present), followed by `product_images` rows ordered by `position`. The five flat primary image fields remain unchanged for existing consumers. The catalog may add `alternate_images` with exactly two objects using the same five `image_*` fields as the primary. Direct HTTPS image URLs on `upload.wikimedia.org` or `thumb.wikimedia.org` are accepted. Older five-field catalog entries remain valid. The import command validates the entire catalog before writing, fills only missing primary and alternate slots, and never changes an existing image. Admin writes and CSV input do not accept gallery fields.
 
 ### 2.2 Error envelope (ALL non-2xx JSON errors)
 

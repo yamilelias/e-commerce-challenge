@@ -72,6 +72,7 @@ final class CsvProductImporterTest extends TestCase
         $db = DriverManager::getConnection(['driver' => 'pdo_sqlite', 'memory' => true, 'wrapperClass' => SqliteConnection::class]);
         $db->executeStatement('CREATE TABLE categories (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(100) NOT NULL, slug VARCHAR(120) NOT NULL UNIQUE)');
         $db->executeStatement("CREATE TABLE products (id INTEGER PRIMARY KEY AUTOINCREMENT, category_id INTEGER NOT NULL, name VARCHAR(200) NOT NULL, sku VARCHAR(100) NOT NULL UNIQUE, description TEXT NOT NULL DEFAULT '', price_cents INTEGER NOT NULL, stock INTEGER NOT NULL, weight_kg NUMERIC(10,3) NOT NULL, image_url TEXT DEFAULT NULL, image_source_url TEXT DEFAULT NULL, image_attribution TEXT DEFAULT NULL, image_license TEXT DEFAULT NULL, image_license_url TEXT DEFAULT NULL, is_active BOOLEAN NOT NULL DEFAULT 1, created_at DATETIME NOT NULL, updated_at DATETIME NOT NULL, FOREIGN KEY (category_id) REFERENCES categories(id))");
+        $db->executeStatement('CREATE TABLE product_images (id INTEGER PRIMARY KEY AUTOINCREMENT, product_id INTEGER NOT NULL, position INTEGER NOT NULL, image_url TEXT NOT NULL, image_source_url TEXT NOT NULL, image_attribution TEXT NOT NULL, image_license TEXT NOT NULL, image_license_url TEXT NOT NULL, UNIQUE(product_id, position))');
         $input = new ProductInput();
         $products = new ProductService($db, $input);
 

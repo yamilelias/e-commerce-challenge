@@ -3,8 +3,10 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ProductCard } from "@/components/products/ProductCard";
-import { getProducts, type ProductQuery } from "@/lib/api/client";
+import { getProducts, productQueryString, type ProductQuery } from "@/lib/api/client";
 import type { ListResponse, Product } from "@/lib/api/types";
+import { Reveal } from "@/components/home/motion/Reveal";
+import styles from "./ProductPages.module.css";
 
 export function CatalogResults({ query, retryKey = 0, compact = false }: { query: ProductQuery; retryKey?: number; compact?: boolean }) {
   const [state, setState] = useState<{ key: string; result: ListResponse<Product> | null; error: string }>({ key: "", result: null, error: "" });
@@ -32,14 +34,14 @@ export function CatalogResults({ query, retryKey = 0, compact = false }: { query
 
   return (
     <>
-      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" aria-live="polite">
-        {result.data.map((product) => <ProductCard key={product.id} product={product} />)}
+      <div className={styles.productGrid} aria-live="polite">
+        {result.data.map((product, index) => <Reveal key={product.id} index={index} className={styles.productReveal}><ProductCard product={product} variant="editorial" /></Reveal>)}
       </div>
       {!compact && <p className="mt-5 text-sm text-base-content/70">Showing {result.data.length} of {result.pagination.total} products</p>}
       {!compact && result.pagination.pages > 1 && <nav className="mt-7 flex flex-wrap items-center justify-center gap-3" aria-label="Catalog pages">
-        {result.pagination.page > 1 && <Link className="btn btn-outline" href={`/products?${new URLSearchParams({ ...Object.fromEntries(Object.entries(query).filter(([, value]) => value !== undefined).map(([key, value]) => [key, String(value)])), page: String(result.pagination.page - 1) })}`}>Previous</Link>}
+        {result.pagination.page > 1 && <Link className="btn btn-outline" href={`/products?${productQueryString({ ...query, page: result.pagination.page - 1 })}`}>Previous</Link>}
         <span className="text-sm">Page {result.pagination.page} of {result.pagination.pages}</span>
-        {result.pagination.page < result.pagination.pages && <Link className="btn btn-outline" href={`/products?${new URLSearchParams({ ...Object.fromEntries(Object.entries(query).filter(([, value]) => value !== undefined).map(([key, value]) => [key, String(value)])), page: String(result.pagination.page + 1) })}`}>Next</Link>}
+        {result.pagination.page < result.pagination.pages && <Link className="btn btn-outline" href={`/products?${productQueryString({ ...query, page: result.pagination.page + 1 })}`}>Next</Link>}
       </nav>}
     </>
   );
