@@ -96,4 +96,5 @@ SQLite and synchronous import keep setup small but limit write concurrency and l
 - `apps/web/`: Next.js storefront, admin UI, cart, checkout, and API proxy.
 - `compose.yaml` and `infra/`: the two-container runtime and persistent database volume.
 - `docs/qa/`: [acceptance matrix](docs/qa/acceptance-matrix.md), [execution evidence](docs/qa/verification.md), and [defect log](docs/qa/defects.md).
+- [BUGS.md](BUGS.md): current limitation, unresolved verification gaps, dependency follow-up, and resolved failures.
 - `memory/`: implemented structure and decision records for maintainers.

@@ -7,3 +7,5 @@ As of 2026-10-16, `scripts/smoke/public_api.py` checks proxied health, catalog, 
 QA-04 extends `docs/qa/acceptance-matrix.md` and `docs/qa/verification.md` with remote image catalog, database/API, startup, and browser evidence. The setup and image dependency are documented in `README.md`; `docs/06-INFRASTRUCTURE.md` names the two data fixtures copied into the API image.
 
 `scripts/smoke/product_image_catalog.py` checks all 85 seeded image records, their two alternates, metadata and direct URL shape before import. `docs/qa/products-redesign.md` records catalog/gallery browser checks and the API runtime limitation for the products redesign.
+
+Root `BUGS.md` indexes the current product limitation, redesign verification gaps, dependency follow-up, and resolved defects. The detailed evidence remains in `docs/qa/defects.md`, `docs/qa/verification.md`, `docs/qa/products-redesign.md`, and `docs/qa/home-redesign.md`.
