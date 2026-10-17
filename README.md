@@ -2,6 +2,8 @@
 
 A local e-commerce MVP with a Next.js storefront and admin UI, a Symfony API, and persistent SQLite. The supplied [product CSV](data/products.csv) seeds the catalog; the [landing-page image](docs/reference/landing-page.png) guided the responsive layout. Checkout simulates payment and creates a paid order; it does not charge a card.
 
+> CSV data download date: Oct 14, 2026
+
 ## Prerequisites and setup
 
 Install Docker Desktop (or Docker Engine with Compose v2) and Python 3. No host PHP or Node.js is needed. Keep the app on localhost: the development session cookie permits HTTP, and this stack is not configured for public deployment.
