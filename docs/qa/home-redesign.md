@@ -39,3 +39,7 @@ The checks below cover the homepage changes in `docs/redesign/06-INTEGRATION-QUA
 | `npm run build -- --webpack` | PASS | 2026-10-16, `apps/web`, exit 0 after integration; all routes compiled. |
 
 The remaining `NOT RUN` and `PARTIAL` entries need browser preference or JavaScript/network emulation, a full keyboard and asset audit, or performance measurements. Source inspection is not counted as runtime proof.
+
+## Featured card hover follow-up (2026-10-17)
+
+The production web build on port 3100, backed by a disposable local product API fixture, rendered both images on the first homepage featured card. Browser inspection measured the alternate at opacity 0 initially, about 0.97 while the card was hovered, and about 0.01 after moving the pointer away. With the pointer off the card, keyboard focus on its link showed the alternate at opacity 1. Both images loaded. `npm run typecheck`, `npm run lint`, and `npm run build -- --webpack` passed after the card change. The reduced-motion CSS was reviewed in source but could not be emulated in this browser interface.

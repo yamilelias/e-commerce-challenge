@@ -15,8 +15,8 @@ export function ProductCard({ product, variant = "default" }: { product: Product
     </div>
   </article>;
   return (
-    <article className="card overflow-hidden border border-base-300 bg-base-100 shadow-sm">
-      <Link href={`/products/${product.id}`} aria-label={`View ${product.name}`}><ProductImage product={product} className="aspect-[4/3] text-6xl" /></Link>
+    <article className={`card overflow-hidden border border-base-300 bg-base-100 shadow-sm ${styles.hoverCard}`}>
+      <Link href={`/products/${product.id}`} aria-label={`View ${product.name}`}><ProductImage product={product} hoverAlternate className={`aspect-[4/3] text-6xl ${styles.defaultImage}`} /></Link>
       <div className="card-body gap-2 p-5">
         <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">{product.category.name}</p>
         <h3 className="card-title text-lg leading-snug"><Link className="hover:underline" href={`/products/${product.id}`}>{product.name}</Link></h3>

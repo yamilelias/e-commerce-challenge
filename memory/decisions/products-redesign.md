@@ -7,3 +7,11 @@
 - Alternatives considered: Replacing primary image fields would break current consumers; a new gallery package would add dependency and motion complexity; sourcing exact variants for all seed names was not feasible, so relevant representative product photos are used where needed.
 - Consequences: Remote photos may fail independently and are covered by local color/primary image fallbacks. The seed import owns alternate curation; admin product editing does not manage alternates. Some fixture products have representative category imagery rather than literal products. See `docs/qa/products-redesign.md` for verification results and limits.
 - Affected files/contracts: `data/product-images.json`, `apps/api/migrations/Version20261016010000.php`, `apps/api/src/Entity/ProductImage.php`, `apps/api/src/Service/ProductImageImporter.php`, `apps/api/src/Service/ProductService.php`, `apps/web/src/app/products/**`, `apps/web/src/components/catalog/**`, `apps/web/src/components/products/**`, `apps/web/src/lib/api/types.ts`, `docs/02-ARCHITECTURE.md`, and `docs/04-API.md`.
+
+## Homepage hover revision (2026-10-17)
+
+- Context: The homepage featured cards use the default `ProductCard` variant and did not show the gallery's alternate on hover.
+- Chosen approach: Enable the existing `ProductImage` alternate on default cards and add the same hover/focus crossfade in shared card CSS, while keeping the homepage card layout and reduced-motion behavior.
+- Reason: The image behavior can be shared without restyling the homepage or changing the API.
+- Alternatives considered: Switching homepage cards to the editorial variant would alter their layout; duplicating image state in `FeaturedProducts` would split fallback logic.
+- Consequences: Default cards with an alternate now reveal it on hover and keyboard focus. Cards without an alternate retain their primary image. Affected files: `apps/web/src/components/products/ProductCard.tsx`, `ProductCard.module.css`, and `memory/structure/redesign-sections.md`.

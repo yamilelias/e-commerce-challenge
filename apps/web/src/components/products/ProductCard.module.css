@@ -3,6 +3,15 @@
   background: transparent;
 }
 
+.defaultImage {
+  transition: transform var(--home-motion-reveal, 560ms) var(--home-motion-ease, ease);
+}
+
+.hoverCard:hover .defaultImage,
+.hoverCard:focus-within .defaultImage {
+  transform: scale(1.025);
+}
+
 .imageLink {
   display: block;
   overflow: hidden;
@@ -26,7 +35,9 @@
 }
 
 .editorialCard:hover .alternate,
-.editorialCard:focus-within .alternate {
+.editorialCard:focus-within .alternate,
+.hoverCard:hover .alternate,
+.hoverCard:focus-within .alternate {
   opacity: 1;
 }
 
@@ -61,6 +72,7 @@
 .stock { margin-top: .4rem; color: #6e544b; font-size: .78rem; }
 
 @media (prefers-reduced-motion: reduce) {
-  .image, .alternate { transition: none; }
-  .editorialCard:hover .image, .editorialCard:focus-within .image { transform: none; }
+  .image, .defaultImage, .alternate { transition: none; }
+  .editorialCard:hover .image, .editorialCard:focus-within .image,
+  .hoverCard:hover .defaultImage, .hoverCard:focus-within .defaultImage { transform: none; }
 }
